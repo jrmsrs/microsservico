@@ -1,6 +1,6 @@
 # my template for node+typescript clean modular projects
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jrmsrs_node-ts-clean-tdd-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jrmsrs_node-ts-clean-tdd-template)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jrmsrs_microsservico&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jrmsrs_microsservico)
 
 ## environment setup
 
@@ -11,7 +11,7 @@
 
 ### remote repository 📚
 
-- [github](http://github.com/jrmsrs/node-ts-clean-tdd-template) + github actions
+- [github](http://github.com/jrmsrs/microsservico) + github actions
   
 ### testing 🧪
 

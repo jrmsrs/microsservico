@@ -1,9 +1,9 @@
 {
-  "name": "node-ts-clean-tdd-template",
+  "name": "microsservico",
   "version": "1.0.0",
-  "description": "my template for node+typescript clean modular projects",
+  "description": "microsservico nome-nao-decidido",
   "main": "index.js",
-  "repository": "http://github.com/jrmsrs/node-ts-clean-tdd-template",
+  "repository": "http://github.com/jrmsrs/microsservico",
   "author": "junior m. soares <jrmsrs2.0@gmail.com>",
   "license": "MIT",
   "scripts": {

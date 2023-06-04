@@ -3964,6 +3964,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"microsservico@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "microsservico@workspace:."
+  dependencies:
+    "@types/jest": ^29.5.2
+    "@types/node": ^20.2.5
+    husky: ^8.0.0
+    jest: ^29.5.0
+    pinst: ^3.0.0
+    ts-jest: ^29.1.0
+    ts-standard: ^12.0.2
+    typescript: ^5.1.3
+  languageName: unknown
+  linkType: soft
+
 "mimic-fn@npm:^2.1.0":
   version: 2.1.0
   resolution: "mimic-fn@npm:2.1.0"
@@ -4150,21 +4165,6 @@ __metadata:
   checksum: b8c56db82c4642a0f443332b331a4396dae452a2ac5a65c8dbd93ef89ecb2fbb0da9d42ac5366d4764973febadca816cf7587dad492dce18d2a6b2af59cda260
   languageName: node
   linkType: hard
-
-"node-ts-clean-tdd-template@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "node-ts-clean-tdd-template@workspace:."
-  dependencies:
-    "@types/jest": ^29.5.2
-    "@types/node": ^20.2.5
-    husky: ^8.0.0
-    jest: ^29.5.0
-    pinst: ^3.0.0
-    ts-jest: ^29.1.0
-    ts-standard: ^12.0.2
-    typescript: ^5.1.3
-  languageName: unknown
-  linkType: soft
 
 "nopt@npm:^6.0.0":
   version: 6.0.0
