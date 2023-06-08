@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "ts-node-dev -r tsconfig-paths/register --inspect --transpile-only --ignore-watch node_modules src/server.ts",
     "build": "tsc -p .",
+    "start": "node dist/server.js",
     "test": "jest --passWithNoTests --silent",
     "test:watch": "yarn test --watch",
     "test:coverage": "yarn test --coverage",
