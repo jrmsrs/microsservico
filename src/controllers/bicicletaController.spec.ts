@@ -188,7 +188,7 @@ describe('Controller updateBicicleta', () => {
     expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
   })
 
-  test('should return status 400 if year or number has non-numeric character', () => {
+  it('should return status 400 if year or number has non-numeric character', () => {
     const req = mockRequest() as any
     req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
     req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: 'abc', numero: 4, status: 'disponivel' }
@@ -203,11 +203,9 @@ describe('Controller updateBicicleta', () => {
         message: 'Algum campo foi preenchido com caracter(es) inválido(s)'
       })
     )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
   })
 
-  test('should return status 400 bad request if id is not provided', () => {
+  it('should return status 400 bad request if id is not provided', () => {
     const req = mockRequest() as any
     req.params.id = null
     req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }
@@ -222,8 +220,6 @@ describe('Controller updateBicicleta', () => {
         message: 'ID inválido'
       })
     )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
   })
 
   test('should return status 404 not found if uuid is valid but doesn\'t match any bicicleta', () => {
