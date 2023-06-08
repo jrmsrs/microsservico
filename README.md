@@ -1,15 +1,15 @@
-# my template for node+typescript clean modular projects
+# microssistema 📦
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jrmsrs_microsservico&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jrmsrs_microsservico)
 
-## environment setup
+## setup do ambiente 🛠
 
-### implementation 📝
+### implementação 📝
 
-- node.js backend rest api
+- node.js + express
 - typescript
 
-### remote repository 📚
+### repositório remoto 📚
 
 - [github](http://github.com/jrmsrs/microsservico) + github actions
   
@@ -22,21 +22,25 @@
 
 - [sonarcloud](https://sonarcloud.io/) - "cloud service offered by sonarsource that helps you with code quality management"
   
-  link to the project: http://its-a-template.null
+  link to the project: https://sonarcloud.io/project/overview?id=jrmsrs_microsservico
 
 ### deployment 🚀
 
 - [vercel](https://vercel.com/) - "vercel is a free cloud platform for static sites and serverless functions that fits perfectly with your workflow"
   
-  live demo: http://its-a-template.null
+  live demo: http://microsservico.vercel.app
 
-### auto-generated documentation 📖
+### docs auto-gerada 📖
 
 - [apidoc](https://apidocjs.com/) - inline documentation for restful web apis
 
-### ide 🛠
+### ide 👨‍💻
 
-- [visual studio code](https://code.visualstudio.com/) - with the following extensions:
+- [visual studio code](https://code.visualstudio.com/) - com as extensões:
   - [sonarlint](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode): helps you detect and fix quality issues as you write code
   - [standardjs](https://marketplace.visualstudio.com/items?itemName=chenxsan.vscode-standardjs): javascript standard style
   - [git graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph): make git looks less painful
+
+### features ✨
+
+- realiza testes automaticamente antes de cada commit para evitar códigos quebrados
