@@ -18,10 +18,6 @@ const router = express.Router()
  *     responses:
  *       200:
  *         description: Retorna um array com todas as bicicletas cadastradas
- *       404:
- *         description: Nenhuma bicicleta encontrada
- *       500:
- *         description: Erro interno
  */
 router.get('/', getBicicleta)
 
@@ -40,8 +36,6 @@ router.get('/', getBicicleta)
  *         description: Erro de validação
  *       404:
  *         description: Bicicleta não encontrada
- *       500:
- *         description: Erro interno
  */
 router.get('/:id', getBicicletaById)
 
@@ -61,8 +55,6 @@ router.get('/:id', getBicicletaById)
  *         description: Retorna a bicicleta criada
  *       400:
  *         description: Erro de validação
- *       500:
- *         description: Erro interno
  */
 router.post('/', createBicicleta)
 
@@ -86,8 +78,6 @@ router.post('/', createBicicleta)
  *         description: Erro de validação
  *       404:
  *         description: Bicicleta não encontrada
- *       500:
- *         description: Erro interno
  */
 router.put('/:id', updateBicicleta)
 
@@ -106,8 +96,6 @@ router.put('/:id', updateBicicleta)
  *         description: Erro de validação
  *       404:
  *         description: Bicicleta não encontrada
- *       500:
- *         description: Erro interno
  */
 router.delete('/:id', deleteBicicleta)
 

@@ -9,7 +9,7 @@ export const errorHandler = (
   console.log(err)
 
   if (err instanceof ApiError) {
-    res.status(err.code).json(makeError(err.code, err.message ?? 'Something went wrong'))
+    res.status(err.code).json(makeError(err.code, err.message as string))
     return
   }
 
