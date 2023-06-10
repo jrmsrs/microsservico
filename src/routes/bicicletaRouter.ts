@@ -32,7 +32,7 @@ router.get('/', getBicicleta)
  *     tags: [Bicicleta]
  *     summary: Retorna uma bicicleta pelo ID
  *     parameters:
- *      - $ref: '#/components/parameters/id'
+ *      - $ref: '#/components/parameters/idBicicleta'
  *     responses:
  *       200:
  *         description: Retorna uma bicicleta pelo ID
@@ -55,7 +55,7 @@ router.get('/:id', getBicicletaById)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/NewBicicleta'
+ *             $ref: '#/components/schemas/NewBicicleta'
  *     responses:
  *       201:
  *         description: Retorna a bicicleta criada
@@ -73,12 +73,12 @@ router.post('/', createBicicleta)
  *     tags: [Bicicleta]
  *     summary: Atualiza uma bicicleta pelo ID
  *     parameters:
- *       - $ref: '#/components/parameters/id'
+ *       - $ref: '#/components/parameters/idBicicleta'
  *     requestBody:
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/NewBicicleta'
+ *             $ref: '#/components/schemas/NewBicicleta'
  *     responses:
  *       200:
  *         description: Retorna a bicicleta atualizada
@@ -98,7 +98,7 @@ router.put('/:id', updateBicicleta)
  *     tags: [Bicicleta]
  *     summary: Deleta uma bicicleta pelo ID
  *     parameters:
- *       - $ref: '#/components/parameters/id'
+ *       - $ref: '#/components/parameters/idBicicleta'
  *     responses:
  *       200:
  *         description: Retorna a bicicleta deletada
@@ -110,54 +110,5 @@ router.put('/:id', updateBicicleta)
  *         description: Erro interno
  */
 router.delete('/:id', deleteBicicleta)
-
-/**
- * @swagger
- * definitions:
- *   NewBicicleta:
- *     required:
- *       - modelo
- *       - marca
- *       - ano
- *       - numero
- *     properties:
- *       modelo:
- *         type: string
- *       marca:
- *         type: string
- *       ano:
- *         type: string
- *         default: 2023
- *       numero:
- *         type: integer
- *       status:
- *         type: string
- *         default: disponivel
- *   Bicicleta:
- *     allOf:
- *       - $ref: '#/definitions/NewBicicleta'
- *     required:
- *       - id
- *     properties:
- *       id:
- *         type: string
- *         format: uuid
- *         example: a2f43e3b-f0f6-40fd-a6a7-dea545076333
- */
-
-/**
- * @swagger
- * components:
- *   parameters:
- *     id:
- *       in: path
- *       name: id
- *       schema:
- *         type: string
- *         format: uuid
- *         default: a2f43e3b-f0f6-40fd-a6a7-dea545076333
- *       description: ID da bicicleta
- *       required: true
- */
 
 export default router
