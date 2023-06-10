@@ -15,24 +15,26 @@
   
 ### testing 🧪
 
-- [jest](https://jestjs.io/): js testing framework.
-- [supertest](https://www.npmjs.com/package/supertest) - "super-agent driven library for testing node.js http servers using a fluent api"
+- [jest](https://jestjs.io/) - unit tests, mocks, test coverage
+- [supertest](https://www.npmjs.com/package/supertest) - integration tests
 
 ### CI/CD 🚧
 
 - [sonarcloud](https://sonarcloud.io/) - "cloud service offered by sonarsource that helps you with code quality management"
   
-  link to the project: https://sonarcloud.io/project/overview?id=jrmsrs_microsservico
+  link do projeto: https://sonarcloud.io/project/overview?id=jrmsrs_microsservico
 
 ### deployment 🚀
 
 - [vercel](https://vercel.com/) - "vercel is a free cloud platform for static sites and serverless functions that fits perfectly with your workflow"
   
-  live demo: http://microsservico.vercel.app
+  live demo: http://ms-equipamento.vercel.app
 
 ### docs auto-gerada 📖
 
-- [apidoc](https://apidocjs.com/) - inline documentation for restful web apis
+- [swagger](https://swagger.io/) com o middleware [swagger-jsdoc](https://www.npmjs.com/package/swagger-jsdoc) + [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express)
+  
+  link da doc: https://ms-equipamento.vercel.app/docs
 
 ### ide 👨‍💻
 
@@ -43,4 +45,4 @@
 
 ### features ✨
 
-- realiza testes automaticamente antes de cada commit para evitar códigos quebrados
+- realiza testes automaticamente antes de cada commit para evitar códigos quebrados com o pacote [husky](https://www.npmjs.com/package/husky)
