@@ -73,5 +73,5 @@ export const deleteBicicleta = (req: Request, res: Response, next: NextFunction)
     return
   }
   Bicicleta.deleteBicicleta(id)
-  res.status(204).json()
+  res.status(200).json()
 }

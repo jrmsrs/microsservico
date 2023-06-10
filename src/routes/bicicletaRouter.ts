@@ -91,7 +91,7 @@ router.put('/:id', updateBicicleta)
  *       - $ref: '#/components/parameters/idBicicleta'
  *     responses:
  *       200:
- *         description: Retorna a bicicleta deletada
+ *         description: Dados removidos com sucesso
  *       400:
  *         description: Erro de validação
  *       404:

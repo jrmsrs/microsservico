@@ -266,7 +266,7 @@ describe('Controller updateBicicleta', () => {
 })
 
 describe('Controller deleteBicicleta', () => {
-  test('should return status 204 no content', () => {
+  test('should return status 200', () => {
     const req = mockRequest() as any
     req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
     const res = mockResponse() as any
@@ -274,7 +274,7 @@ describe('Controller deleteBicicleta', () => {
 
     deleteBicicleta(req, res, next)
 
-    expect(res.status).toHaveBeenCalledWith(204)
+    expect(res.status).toHaveBeenCalledWith(200)
     expect(res.json).toHaveBeenCalledWith()
   })
 
