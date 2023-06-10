@@ -33,10 +33,21 @@ const options = {
     externalDocs: {
       description: 'Github',
       url: 'https://github.com/jrmsrs/microsservico'
-    }
+    },
+    servers: [
+      {
+        description: 'Local',
+        url: 'http://localhost:3000'
+      },
+      {
+        description: 'Produção',
+        url: 'https://ms-equipamento.vercel.app'
+      }
+    ]
   },
   apis: [
-    './src/routes/*.ts'
+    './src/routes/*.ts',
+    './src/routes/*.js' // vercel build
   ]
 }
 
