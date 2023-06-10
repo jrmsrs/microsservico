@@ -137,22 +137,6 @@ describe('Controller createBicicleta', () => {
     expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
     expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
   })
-
-  test('should return status 400 bad request if id doesn\'t match UUID format', () => {
-    const req = mockRequest() as any
-    req.body = { id: 'non-uuid', modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4 }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    createBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'ID inválido'
-      })
-    )
-  })
 })
 
 describe('Controller updateBicicleta', () => {

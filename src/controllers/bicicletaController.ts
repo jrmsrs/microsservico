@@ -6,10 +6,6 @@ import { isValidUUID } from '../utils/uuid'
 
 export const getBicicleta = (req: Request, res: Response, next: NextFunction): void => {
   const bicicletas = Bicicleta.getBicicletas()
-  if (bicicletas === null || bicicletas.length === 0) {
-    next(ApiError.notFound('Nenhuma bicicleta encontrada'))
-    return
-  }
   res.status(200).json(bicicletas)
 }
 
@@ -31,10 +27,6 @@ export const createBicicleta = (req: Request, res: Response, next: NextFunction)
   const { modelo, marca, ano, numero } = req.body
   const status = req.body.status ?? 'disponivel'
   const id = randomUUID()
-  if (!isValidUUID(id)) {
-    next(ApiError.badRequest('ID inválido'))
-    return
-  }
   if (modelo === undefined || marca === undefined || ano === undefined || numero === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
