@@ -5,6 +5,16 @@ import { mainController } from '../controllers/mainController'
 
 const indexRouter = express.Router()
 
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     tags: [Aplicação]
+ *     summary: Rota principal
+ *     responses:
+ *       200:
+ *         description: Retorna uma mensagem de boas vindas
+ */
 indexRouter.get('/', mainController)
 
 export default (app: express.Application): void => {
