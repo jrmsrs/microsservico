@@ -2,7 +2,7 @@ import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { tags } from './tags'
 import { components } from './components'
-import { info, externalDocs, servers } from './info'
+import { info, externalDocs } from './info'
 
 const options = {
   swaggerDefinition: {
@@ -10,8 +10,7 @@ const options = {
     info,
     tags,
     components,
-    externalDocs,
-    servers
+    externalDocs
   },
   apis: [
     './src/routes/*.ts',

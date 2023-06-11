@@ -18,14 +18,3 @@ export const externalDocs = {
   description: 'Github',
   url: 'https://github.com/jrmsrs/microsservico'
 }
-
-export const servers = [
-  {
-    description: 'Local',
-    url: 'http://localhost:3000'
-  },
-  {
-    description: 'Produção',
-    url: 'https://ms-equipamento.vercel.app'
-  }
-]
