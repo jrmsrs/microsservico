@@ -16,7 +16,7 @@
 ### testing 🧪
 
 - [jest](https://jestjs.io/) - unit tests, mocks, test coverage
-- [supertest](https://www.npmjs.com/package/supertest) - integration tests
+- [supertest](https://github.com/ladjs/supertest) - integration tests
 
 ### CI/CD 🚧
 
@@ -32,7 +32,7 @@
 
 ### docs auto-gerada 📖
 
-- [swagger](https://swagger.io/) com o middleware [swagger-jsdoc](https://www.npmjs.com/package/swagger-jsdoc) + [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express)
+- [swagger](https://swagger.io/) com o middleware [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) + [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express)
   
   link da doc: https://ms-equipamento.vercel.app/docs
 
@@ -45,4 +45,4 @@
 
 ### features ✨
 
-- realiza testes automaticamente antes de cada commit para evitar códigos quebrados com o pacote [husky](https://www.npmjs.com/package/husky)
+- realiza testes automaticamente antes de cada commit para evitar códigos quebrados com o pacote [husky](https://github.com/typicode/husky)
