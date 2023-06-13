@@ -9,5 +9,13 @@ export const tags = [
   {
     name: 'Bicicleta',
     description: 'Endpoints para gerenciamento de bicicletas'
+  },
+  {
+    name: 'Totem',
+    description: 'Endpoints para gerenciamento de totens'
+  },
+  {
+    name: 'Tranca',
+    description: 'Endpoints para gerenciamento de trancas'
   }
 ]
