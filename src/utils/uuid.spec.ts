@@ -1,7 +1,7 @@
 import { isValidUUID } from './uuid'
 
-describe('Controller method isValidUUID', () => {
-  test('should return true if uuid is valid', () => {
+describe('Controller isValidUUID', () => {
+  it('should return true if uuid is valid', () => {
     // pattern xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx; y=8|9|A|B
     expect(isValidUUID('non-uuid')).toBe(false)
     expect(isValidUUID('')).toBe(false)

@@ -2,8 +2,8 @@ import { makeError, errorHandler } from './error-handler'
 import { mockNext, mockRequest, mockResponse } from '../utils/interceptor'
 import { ApiError } from './ApiError'
 
-describe('errorHandler()', () => {
-  it('should return a 500 error', () => {
+describe('ErrorHandling errorHandler', () => {
+  it('should return 500 INTERNAL', () => {
     const req = mockRequest() as any
     const res = mockResponse() as any
     const next = mockNext
@@ -11,7 +11,7 @@ describe('errorHandler()', () => {
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.json).toHaveBeenCalledWith({ message: 'Something went wrong', code: 500 })
   })
-  it('should return a 400 error', () => {
+  it('should return 400 BAD REQUEST', () => {
     const req = mockRequest() as any
     const res = mockResponse() as any
     const next = mockNext
@@ -19,7 +19,7 @@ describe('errorHandler()', () => {
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.json).toHaveBeenCalledWith({ message: 'Bad request', code: 400 })
   })
-  it('should return a 404 error', () => {
+  it('should return 404 NOT FOUND', () => {
     const req = mockRequest() as any
     const res = mockResponse() as any
     const next = mockNext
@@ -29,7 +29,7 @@ describe('errorHandler()', () => {
   })
 })
 
-describe('makeError()', () => {
+describe('ErrorHandling makeError', () => {
   it('should return a 500 error', () => {
     const error = makeError(500, 'Something went wrong')
     expect(error).toEqual({

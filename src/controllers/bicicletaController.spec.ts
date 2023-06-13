@@ -1,333 +1,246 @@
 import { mockNext, mockRequest, mockResponse } from '../utils/interceptor'
-import {
-  getBicicleta,
-  getBicicletaById,
-  createBicicleta,
-  updateBicicleta,
-  deleteBicicleta
-} from './bicicletaController'
+import { getBicicleta, getBicicletaById, createBicicleta, updateBicicleta, deleteBicicleta } from './bicicletaController'
 
-describe('Controller getBicicleta', () => {
-  test('should return status 200 and a list of bicicletas', () => {
-    const req = mockRequest()
-    const res = mockResponse()
-    const next = mockNext
+describe('Controller bicicletaController', () => {
+  const testBody = {
+    modelo: 'Modelo Teste',
+    marca: 'Marca Teste',
+    ano: '2021',
+    numero: 4,
+    status: 'disponivel'
+  } as any
 
-    getBicicleta(req as any, res as any, next)
+  const testExistentBody = {
+    id: 'a2f43e3b-f0f6-40fd-a6a7-dea545076333',
+    modelo: 'Modelo 2',
+    marca: 'Marca 2',
+    ano: '2021',
+    numero: 2,
+    status: 'disponivel'
+  } as any
 
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.json).toHaveBeenCalledWith(expect.any(Array))
-  })
-})
+  const testExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
+  const testNonExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545070000'
+  const testInvalidId = 'not-uuid'
+  const testInvalidAno = 'not-a-number'
 
-describe('Controller getBicicletaById', () => {
-  test('should return status 200 and a bicicleta', () => {
-    const req = mockRequest() as any
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    const res = mockResponse() as any
-    const next = mockNext as any
+  const expectResCalledBody = (res: any, status: any = 200, body?: any): void => {
+    expect(res.status).toHaveBeenCalledWith(status)
+    if (body !== undefined) {
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining(body))
+    } else {
+      expect(res.json).toHaveBeenCalled()
+    }
+  }
 
-    getBicicletaById(req, res, next)
+  const expectResCalledArrayContaning = (res: any, status: any = 200, body?: any): void => {
+    expect(res.status).toHaveBeenCalledWith(status)
+    if (body !== undefined) {
+      expect(res.json).toHaveBeenCalledWith(expect.arrayContaining([body]))
+    } else {
+      expect(res.json).toHaveBeenCalled()
+    }
+  }
 
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.json).toHaveBeenCalledWith({ id: 'a2f43e3b-f0f6-40fd-a6a7-dea545076333', modelo: 'Modelo 2', marca: 'Marca 2', ano: '2021', numero: 2, status: 'disponivel' })
-  })
-
-  test('should return status 400 bad request if id doesn\'t match UUID format', () => {
-    const req = mockRequest() as any
-    req.params.id = 'non-uuid'
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    getBicicletaById(req, res, next)
-
+  const expectNextCalledWith = (res: any, next: any, code: any = 200, message?: any): void => {
     expect(next).toHaveBeenCalledWith(
       expect.objectContaining({
-        code: 400,
-        message: 'ID inválido'
+        code,
+        message
       })
     )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
+    expect(res.status).not.toHaveBeenCalled()
+    expect(res.json).not.toHaveBeenCalled()
+  }
 
-  test('should return status 400 bad request if id is not provided', () => {
+  const makeSut = (id?: any, body?: any): { req: any, res: any, next: any } => {
     const req = mockRequest() as any
-    req.params.id = null
+    req.params.id = id
+    req.body = body
     const res = mockResponse() as any
     const next = mockNext as any
+    return { req, res, next }
+  }
 
-    getBicicletaById(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'ID inválido'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
+  describe('Controller getBicicleta', () => {
+    it('should return 200 OK and a list of bicicletas', () => {
+      const { req, res, next } = makeSut()
+      getBicicleta(req, res, next)
+      expectResCalledArrayContaning(
+        res, 200, testExistentBody
+      )
+    })
   })
 
-  test('should return status 404 not found if uuid is valid but doesn\'t match any bicicleta', () => {
-    const req = mockRequest() as any
-    // comparing to 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076334'
-    const res = mockResponse() as any
-    const next = mockNext as any
+  describe('Controller getBicicletaById', () => {
+    it('should return 200 OK and a bicicleta', () => {
+      const { req, res, next } = makeSut(testExistentId)
+      getBicicletaById(req, res, next)
+      expectResCalledBody(
+        res, 200, testExistentBody
+      )
+    })
 
-    getBicicletaById(req, res, next)
+    it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
+      const { req, res, next } = makeSut(testInvalidId)
+      getBicicletaById(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'ID inválido'
+      )
+    })
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 404,
-        message: 'Bicicleta não encontrada'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
-})
+    it('should return 400 BAD REQUEST if id is not provided', () => {
+      const { req, res, next } = makeSut(null)
+      getBicicletaById(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'ID inválido'
+      )
+    })
 
-describe('Controller createBicicleta', () => {
-  test('should return status 201 and the created bicicleta', () => {
-    const req = mockRequest() as any
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    createBicicleta(req, res, next)
-
-    expect(res.status).toHaveBeenCalledWith(201)
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: expect.any(String), modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }))
-  })
-
-  test('should return status 400 bad request if a a mandatory field is not provided', () => {
-    const req = mockRequest() as any
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021' }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    createBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'Campos obrigatórios não preenchidos'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
+    it('should return 404 NOT FOUND if uuid is valid but doesn\'t match any bicicleta', () => {
+      const { req, res, next } = makeSut(testNonExistentId)
+      getBicicletaById(req, res, next)
+      expectNextCalledWith(
+        res, next, 404,
+        'Bicicleta não encontrada'
+      )
+    })
   })
 
-  test('should return status 400 bad request if a field is not valid', () => {
-    const req = mockRequest() as any
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: 'abc', numero: 4 }
-    const res = mockResponse() as any
-    const next = mockNext as any
+  describe('Controller createBicicleta', () => {
+    it('should return 201 CREATED and created the bicicleta', () => {
+      const body = { ...testBody }
+      const { req, res, next } = makeSut(null, body)
+      createBicicleta(req, res, next)
+      expectResCalledBody(
+        res, 201, {
+          ...req.body,
+          id: expect.any(String)
+        })
+    })
 
-    createBicicleta(req, res, next)
+    it('should return 400 BAD REQUEST if a mandatory field is not provided', () => {
+      const body = { ...testBody }
+      delete body.modelo
+      const { req, res, next } = makeSut(null, body)
+      createBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'Campos obrigatórios não preenchidos'
+      )
+    })
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'Algum campo foi preenchido com caracter(es) inválido(s)'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
-})
-
-describe('Controller updateBicicleta', () => {
-  test('should return status 200 and the updated bicicleta', () => {
-    const req = mockRequest() as any
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    updateBicicleta(req, res, next)
-
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: 'a2f43e3b-f0f6-40fd-a6a7-dea545076333', modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }))
-  })
-
-  test('should return status 400 bad request if id doesn\'t match UUID format', () => {
-    const req = mockRequest() as any
-    req.params.id = 'non-uuid'
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    updateBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'ID inválido'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
+    it('should return 400 BAD REQUEST if a field is not valid', () => {
+      const body = { ...testBody }
+      body.ano = testInvalidAno
+      const { req, res, next } = makeSut(null, body)
+      createBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'Algum campo foi preenchido com caracter(es) inválido(s)'
+      )
+    })
   })
 
-  it('should return status 400 if year or number has non-numeric character', () => {
-    const req = mockRequest() as any
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: 'abc', numero: 4, status: 'disponivel' }
-    const res = mockResponse() as any
-    const next = mockNext as any
+  describe('Controller updateBicicleta', () => {
+    it('should return 200 OK and the updated bicicleta', () => {
+      const body = { ...testBody }
+      const { req, res, next } = makeSut(testExistentId, body)
+      updateBicicleta(req, res, next)
+      expectResCalledBody(
+        res, 200, {
+          ...req.body, id: testExistentId
+        }
+      )
+    })
 
-    updateBicicleta(req, res, next)
+    it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
+      const body = { ...testBody }
+      const { req, res, next } = makeSut(testInvalidId, body)
+      updateBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'ID inválido'
+      )
+    })
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'Algum campo foi preenchido com caracter(es) inválido(s)'
-      })
-    )
+    it('should return 400 BAD REQUEST if a field is not valid', () => {
+      const body = { ...testBody }
+      body.ano = testInvalidAno
+      const { req, res, next } = makeSut(testExistentId, body)
+      updateBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'Algum campo foi preenchido com caracter(es) inválido(s)'
+      )
+    })
+
+    it('should return 400 BAD REQUEST if id is not provided', () => {
+      const body = { ...testBody }
+      const { req, res, next } = makeSut(null, body)
+      updateBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'ID inválido'
+      )
+    })
+
+    it('should return 404 NOT FOUND if uuid is valid but doesn\'t match any bicicleta', () => {
+      const body = { ...testBody }
+      const { req, res, next } = makeSut(testNonExistentId, body)
+      updateBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 404,
+        'Bicicleta não encontrada'
+      )
+    })
+
+    it('should return 400 BAD REQUEST if a mandatory field is not provided', () => {
+      const body = { ...testBody }
+      delete body.modelo
+      const { req, res, next } = makeSut(testExistentId, body)
+      updateBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'Campos obrigatórios não preenchidos'
+      )
+    })
   })
 
-  it('should return status 400 bad request if id is not provided', () => {
-    const req = mockRequest() as any
-    req.params.id = null
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }
-    const res = mockResponse() as any
-    const next = mockNext as any
+  describe('Controller deleteBicicleta', () => {
+    it('should return 200 OK', () => {
+      const { req, res, next } = makeSut(testExistentId)
+      deleteBicicleta(req, res, next)
+      expectResCalledBody(res)
+    })
 
-    updateBicicleta(req, res, next)
+    it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
+      const { req, res, next } = makeSut(testInvalidId)
+      deleteBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'ID inválido'
+      )
+    })
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'ID inválido'
-      })
-    )
-  })
+    it('should return 400 BAD REQUEST if id is not provided', () => {
+      const { req, res, next } = makeSut(null)
+      deleteBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 400,
+        'ID inválido'
+      )
+    })
 
-  test('should return status 404 not found if uuid is valid but doesn\'t match any bicicleta', () => {
-    const req = mockRequest() as any
-    // comparing to 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076334'
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021', numero: 4, status: 'disponivel' }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    updateBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 404,
-        message: 'Bicicleta não encontrada'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
-
-  test('should return status 400 bad request if a a mandatory field is not provided', () => {
-    const req = mockRequest() as any
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: '2021' }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    updateBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'Campos obrigatórios não preenchidos'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
-
-  test('should return status 400 bad request if a field is not valid', () => {
-    const req = mockRequest() as any
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    req.body = { modelo: 'Modelo 4', marca: 'Marca 4', ano: 'abc', numero: 4 }
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    updateBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'Algum campo foi preenchido com caracter(es) inválido(s)'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
-})
-
-describe('Controller deleteBicicleta', () => {
-  test('should return status 200', () => {
-    const req = mockRequest() as any
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    deleteBicicleta(req, res, next)
-
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.json).toHaveBeenCalledWith()
-  })
-
-  test('should return status 400 bad request if id doesn\'t match UUID format', () => {
-    const req = mockRequest() as any
-    req.params.id = 'non-uuid'
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    deleteBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'ID inválido'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
-
-  test('should return status 400 bad request if id is not provided', () => {
-    const req = mockRequest() as any
-    req.params.id = null
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    deleteBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 400,
-        message: 'ID inválido'
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled() // No need to check status when next is called
-    expect(res.json).not.toHaveBeenCalled() // No need to check json when next is called
-  })
-
-  test('should return status 404 not found if uuid is valid but doesn\'t match any bicicleta', () => {
-    const req = mockRequest() as any
-    // comparing to 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-    req.params.id = 'a2f43e3b-f0f6-40fd-a6a7-dea545076334'
-    const res = mockResponse() as any
-    const next = mockNext as any
-
-    deleteBicicleta(req, res, next)
-
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code: 404,
-        message: 'Bicicleta não encontrada'
-      })
-    )
+    it('should return 404 NOT FOUND if uuid is valid but doesn\'t match any bicicleta', () => {
+      const { req, res, next } = makeSut(testNonExistentId)
+      deleteBicicleta(req, res, next)
+      expectNextCalledWith(
+        res, next, 404,
+        'Bicicleta não encontrada'
+      )
+    })
   })
 })

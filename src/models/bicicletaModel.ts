@@ -24,7 +24,7 @@ let bicicletas: Bicicleta[] = [
     marca: 'Marca 3',
     ano: '2021',
     numero: 3,
-    status: 'disponivel'
+    status: 'em uso'
   }
 ]
 

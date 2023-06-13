@@ -2,7 +2,7 @@ import { mockRequest, mockResponse } from '../utils/interceptor'
 import { mainController } from './mainController'
 
 describe('Controller mainController()', () => {
-  test('should return hello world', () => {
+  it('should return a welcome message', () => {
     const req = mockRequest() as any
     const res = mockResponse() as any
 
