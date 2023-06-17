@@ -7,7 +7,6 @@ describe('Controller mainController()', () => {
 
     mainController(req, res)
 
-    expect(res.status).toHaveBeenCalledWith(200)
-    expect(res.json).toHaveBeenCalledWith({ message: 'A documentação das endpoints estão em /docs' })
+    expect(res.redirect).toHaveBeenCalledWith(303, '/docs')
   })
 })
