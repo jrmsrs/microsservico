@@ -2,8 +2,13 @@ import { makeSut } from '../utils/interceptor'
 import { getTranca, getTrancaById, createTranca, updateTranca, deleteTranca } from './trancaController'
 
 describe('Controller trancaController', () => {
+  const testExistentId = 6
+  const testNonExistentId = -1
+  const testInvalidNumber = 'not-a-number'
+  const testInvalidTokenId = -1
+
   const testBody = {
-    totemId: '40dd16cd-c6de-4836-bb0f-cda7a8e24bf6',
+    totemId: 3,
     numero: 2,
     anoDeFabricacao: '2020',
     modelo: 'Modelo Teste',
@@ -11,13 +16,13 @@ describe('Controller trancaController', () => {
   } as any
 
   const testExistentBody = {
-    id: '6100f40d-5d5d-4178-85ba-4c8cc6be002b',
-    totemId: '40dd16cd-c6de-4836-bb0f-cda7a8e24bf6',
-    numero: 3,
+    id: 6,
+    totemId: 3,
+    numero: 6,
     anoDeFabricacao: '2020',
-    modelo: 'Modelo 3',
+    modelo: 'Modelo 6',
     status: 'disponivel',
-    localizacao: 'Localização 1'
+    localizacao: 'Localização 3'
   } as any
 
   const errorBody = {
@@ -38,12 +43,6 @@ describe('Controller trancaController', () => {
     }
   }
 
-  const testExistentId = '6100f40d-5d5d-4178-85ba-4c8cc6be002b'
-  const testNonExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545070000'
-  const testInvalidId = 'not-uuid'
-  const testInvalidAno = 'not-a-number'
-  const testInvalidTokenId = '99dd16cd-c6de-4836-bb0f-cda7a8e24b99'
-
   const expectResCalledWith = (successStatus: any, res: any, expectStatus: any, expectRes?: any): void => {
     if (successStatus !== null) {
       expect(successStatus).toHaveBeenCalledWith(expectStatus)
@@ -60,7 +59,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut()
       getTranca(req, res, next)
       expectResCalledWith(
-        res.status, res.json, 200, expect.arrayContaining([testExistentBody])
+        res.status, res.json,
+        200, expect.arrayContaining([testExistentBody])
       )
     })
   })
@@ -70,16 +70,17 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(testExistentId)
       getTrancaById(req, res, next)
       expectResCalledWith(
-        res.status, res.json, 200, expect.objectContaining(testExistentBody)
+        res.status, res.json,
+        200, expect.objectContaining(testExistentBody)
       )
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
-      const { req, res, next } = makeSut(testInvalidId)
+      const { req, res, next } = makeSut(testInvalidNumber)
       getTrancaById(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidId)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -87,8 +88,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(null)
       getTrancaById(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidId)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -96,8 +97,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(testNonExistentId)
       getTrancaById(req, res, next)
       expectResCalledWith(
-        null, next, 404,
-        expect.objectContaining(errorBody.notFound)
+        null, next,
+        404, expect.objectContaining(errorBody.notFound)
       )
     })
   })
@@ -110,8 +111,8 @@ describe('Controller trancaController', () => {
       expectResCalledWith(
         res.status, res.json, 201, expect.objectContaining({
           ...req.body,
-          id: expect.any(String),
-          localizacao: 'Localização 1'
+          id: expect.any(Number),
+          localizacao: 'Localização 3'
         })
       )
     })
@@ -122,19 +123,19 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(null, body)
       createTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.mandatoryNotFilled)
+        null, next,
+        400, expect.objectContaining(errorBody.mandatoryNotFilled)
       )
     })
 
     it('should return 400 BAD REQUEST if a field is not valid', () => {
       const body = { ...testBody }
-      body.anoDeFabricacao = testInvalidAno
+      body.anoDeFabricacao = testInvalidNumber
       const { req, res, next } = makeSut(null, body)
       createTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidField)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidField)
       )
     })
 
@@ -144,8 +145,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(null, body)
       createTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidFK)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidFK)
       )
     })
   })
@@ -164,22 +165,22 @@ describe('Controller trancaController', () => {
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
       const body = { ...testBody }
-      const { req, res, next } = makeSut(testInvalidId, body)
+      const { req, res, next } = makeSut(testInvalidNumber, body)
       updateTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidId)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 400 BAD REQUEST if a field is not valid', () => {
       const body = { ...testBody }
-      body.anoDeFabricacao = testInvalidAno
+      body.anoDeFabricacao = testInvalidNumber
       const { req, res, next } = makeSut(testExistentId, body)
       updateTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidField)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidField)
       )
     })
 
@@ -188,8 +189,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(null, body)
       updateTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidId)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -198,8 +199,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(testNonExistentId, body)
       updateTranca(req, res, next)
       expectResCalledWith(
-        null, next, 404,
-        expect.objectContaining(errorBody.notFound)
+        null, next,
+        404, expect.objectContaining(errorBody.notFound)
       )
     })
 
@@ -209,8 +210,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(testExistentId, body)
       updateTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.mandatoryNotFilled)
+        null, next,
+        400, expect.objectContaining(errorBody.mandatoryNotFilled)
       )
     })
 
@@ -220,8 +221,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(testExistentId, body)
       updateTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidFK)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidFK)
       )
     })
   })
@@ -234,11 +235,11 @@ describe('Controller trancaController', () => {
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
-      const { req, res, next } = makeSut(testInvalidId)
+      const { req, res, next } = makeSut(testInvalidNumber)
       deleteTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidId)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -246,8 +247,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(null)
       deleteTranca(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidId)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -255,8 +256,8 @@ describe('Controller trancaController', () => {
       const { req, res, next } = makeSut(testNonExistentId)
       deleteTranca(req, res, next)
       expectResCalledWith(
-        null, next, 404,
-        expect.objectContaining(errorBody.notFound)
+        null, next,
+        404, expect.objectContaining(errorBody.notFound)
       )
     })
   })

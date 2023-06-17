@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import * as Totem from '../models/totemModel'
 import { ApiError } from '../error/ApiError'
-import { randomUUID, UUID } from 'crypto'
-import { isValidUUID } from '../utils/uuid'
 
 export const getTotem = (req: Request, res: Response, next: NextFunction): void => {
   const totens = Totem.getTotens()
@@ -10,13 +8,13 @@ export const getTotem = (req: Request, res: Response, next: NextFunction): void 
 }
 
 export const getTotemById = (req: Request, res: Response, next: NextFunction): void => {
-  const id = req.params.id as UUID
-  if (!isValidUUID(id)) {
+  const id = Number(req.params.id)
+  if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
   const totem = Totem.getTotemById(id)
-  if (Totem.getTotemById(id) == null) {
+  if (Totem.getTotemById(id) === undefined) {
     next(ApiError.notFound('Totem não encontrado'))
     return
   }
@@ -25,23 +23,22 @@ export const getTotemById = (req: Request, res: Response, next: NextFunction): v
 
 export const createTotem = (req: Request, res: Response, next: NextFunction): void => {
   const { descricao, localizacao } = req.body
-  const id = randomUUID()
   if (descricao === undefined || localizacao === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
   }
-  Totem.createTotem({ id, descricao, localizacao })
+  const id = Totem.createTotem({ descricao, localizacao })
   res.status(201).json(Totem.getTotemById(id))
 }
 
 export const updateTotem = (req: Request, res: Response, next: NextFunction): void => {
-  const id = req.params.id as UUID
+  const id = Number(req.params.id)
   const { descricao, localizacao } = req.body
-  if (!isValidUUID(id)) {
+  if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  if (Totem.getTotemById(id) == null) {
+  if (Totem.getTotemById(id) === undefined) {
     next(ApiError.notFound('Totem não encontrado'))
     return
   }
@@ -54,12 +51,12 @@ export const updateTotem = (req: Request, res: Response, next: NextFunction): vo
 }
 
 export const deleteTotem = (req: Request, res: Response, next: NextFunction): void => {
-  const id = req.params.id as UUID
-  if (!isValidUUID(id)) {
+  const id = Number(req.params.id)
+  if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  if (Totem.getTotemById(id) == null) {
+  if (Totem.getTotemById(id) === undefined) {
     next(ApiError.notFound('Totem não encontrado'))
     return
   }

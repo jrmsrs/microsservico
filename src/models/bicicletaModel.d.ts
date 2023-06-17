@@ -1,7 +1,5 @@
-import { UUID } from 'crypto'
-
 export interface Bicicleta {
-  id: UUID
+  id?: number
   marca: string
   modelo: string
   ano: string

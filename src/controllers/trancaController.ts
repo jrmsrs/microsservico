@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from 'express'
 import * as Tranca from '../models/trancaModel'
 import * as Totem from '../models/totemModel'
 import { ApiError } from '../error/ApiError'
-import { randomUUID, UUID } from 'crypto'
-import { isValidUUID } from '../utils/uuid'
 
 export const getTranca = (req: Request, res: Response, next: NextFunction): void => {
   const trancas = Tranca.getTrancas() as any[]
@@ -14,12 +12,12 @@ export const getTranca = (req: Request, res: Response, next: NextFunction): void
 }
 
 export const getTrancaById = (req: Request, res: Response, next: NextFunction): void => {
-  const id = req.params.id as UUID
-  if (!isValidUUID(id)) {
+  const id = Number(req.params.id)
+  if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  if (Tranca.getTrancaById(id) == null) {
+  if (Tranca.getTrancaById(id) === undefined) {
     next(ApiError.notFound('Tranca não encontrada'))
     return
   }
@@ -30,7 +28,6 @@ export const getTrancaById = (req: Request, res: Response, next: NextFunction): 
 
 export const createTranca = (req: Request, res: Response, next: NextFunction): void => {
   const { totemId, numero, anoDeFabricacao, modelo } = req.body
-  const id = randomUUID()
   if (totemId === undefined || numero === undefined || anoDeFabricacao === undefined || modelo === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
@@ -44,20 +41,20 @@ export const createTranca = (req: Request, res: Response, next: NextFunction): v
     next(ApiError.badRequest('TotemID inválido / não encontrado'))
     return
   }
-  Tranca.createTranca({ id, totemId, numero, anoDeFabricacao, modelo, status: 'disponivel' })
+  const id = Tranca.createTranca({ totemId, numero, anoDeFabricacao, modelo, status: 'disponivel' })
   const tranca = Tranca.getTrancaById(id) as any
   tranca.localizacao = totem.localizacao
   res.status(201).json(tranca)
 }
 
 export const updateTranca = (req: Request, res: Response, next: NextFunction): void => {
-  const id = req.params.id as UUID
+  const id = Number(req.params.id)
   const { totemId, numero, anoDeFabricacao, modelo, status } = req.body
-  if (!isValidUUID(id)) {
+  if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  if (Tranca.getTrancaById(id) == null) {
+  if (Tranca.getTrancaById(id) === undefined) {
     next(ApiError.notFound('Tranca não encontrada'))
     return
   }
@@ -81,12 +78,12 @@ export const updateTranca = (req: Request, res: Response, next: NextFunction): v
 }
 
 export const deleteTranca = (req: Request, res: Response, next: NextFunction): void => {
-  const id = req.params.id as UUID
-  if (!isValidUUID(id)) {
+  const id = Number(req.params.id)
+  if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  if (Tranca.getTrancaById(id) == null) {
+  if (Tranca.getTrancaById(id) === undefined) {
     next(ApiError.notFound('Tranca não encontrada'))
     return
   }

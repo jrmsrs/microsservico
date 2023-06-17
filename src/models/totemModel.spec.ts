@@ -1,4 +1,3 @@
-import { UUID, randomUUID } from 'crypto'
 import {
   getTotens,
   getTotemById,
@@ -8,22 +7,19 @@ import {
 } from './totemModel'
 import type { Totem } from './totemModel.d'
 
-describe('Model totemModel', () => {
-  const ids = [
-    '40dd16cd-c6de-4836-bb0f-cda7a8e24bf6',
-    '65c3dc3d-ff7f-482c-b0f9-0758739f0a5f',
-    '859f074e-e02e-427d-be61-8d87129c1bbd'
-  ] as UUID[]
+const testExistentId = 2
+const testNonExistentId = -1
 
+describe('Model totemModel', () => {
   describe('Model getTotens', () => {
     it('should get a list of totens', () => {
       const mockTotens: Totem[] = []
       // Cria um array de totens com os mesmos ids gerados anteriormente
-      ids.forEach((id, i) => {
+      for (let i = 0; i < 3; i++) {
         mockTotens.push({
-          id, descricao: `Descrição ${i + 1}`, localizacao: `Localização ${i + 1}`
+          id: i + 1, descricao: `Descrição ${i + 1}`, localizacao: `Localização ${i + 1}`
         })
-      })
+      }
       const result = getTotens()
       expect(result).toEqual(mockTotens)
     })
@@ -31,29 +27,25 @@ describe('Model totemModel', () => {
 
   describe('Model getTotemById', () => {
     it('should get the totem with the given ID', () => {
-      // Obtem o segundo id do array
-      const queryId = 1
-      const id = ids[queryId]
       const mockTotens: Totem[] = []
-      ids.forEach((id, i) => {
+      for (let i = 0; i < 3; i++) {
         mockTotens.push({
-          id, descricao: `Descrição ${i + 1}`, localizacao: `Localização ${i + 1}`
+          id: i + 1, descricao: `Descrição ${i + 1}`, localizacao: `Localização ${i + 1}`
         })
-      })
-      const result = getTotemById(id)
-      expect(result).toEqual(mockTotens[queryId])
+      }
+      const result = getTotemById(testExistentId)
+      expect(result).toEqual(mockTotens[testExistentId - 1])
     })
     it('should return undefined if totem is not found', () => {
-      const result = getTotemById(randomUUID())
+      const result = getTotemById(testNonExistentId)
       expect(result).toBeUndefined()
     })
   })
 
   describe('Model createTotem', () => {
     it('should create a new totem', () => {
-      const id = randomUUID()
-      const mockTotem = { id, descricao: 'Descrição 1', localizacao: 'Localização 1' }
-      createTotem(mockTotem)
+      const mockTotem = { descricao: 'Descrição 1', localizacao: 'Localização 1' }
+      const id = createTotem(mockTotem)
       const result = getTotemById(id)
       expect(result).toEqual(mockTotem)
     })
@@ -61,7 +53,7 @@ describe('Model totemModel', () => {
 
   describe('Model updateTotem', () => {
     it('should update the totem with the given ID if found', () => {
-      const id = ids[0]
+      const id = testExistentId
       const mockTotem = { id, descricao: 'Descrição X', localizacao: 'Localização X' }
       const changed = updateTotem(id, mockTotem)
       const result = getTotemById(id)
@@ -69,7 +61,7 @@ describe('Model totemModel', () => {
       expect(result).toEqual(mockTotem)
     })
     it('should ensure that nothing changed if totem is not found', () => {
-      const id = randomUUID()
+      const id = testNonExistentId
       const mockTotem = { id, descricao: 'Descrição X', localizacao: 'Localização X' }
       const changed = updateTotem(id, mockTotem)
       expect(changed).toBe(false)
@@ -78,14 +70,14 @@ describe('Model totemModel', () => {
 
   describe('Model deleteTotem', () => {
     it('should delete the totem with the given ID if found', () => {
-      const id = ids[0]
+      const id = testExistentId
       const changed = deleteTotem(id)
       const result = getTotemById(id)
       expect(changed).toBe(true)
       expect(result).toBeUndefined()
     })
     it('should ensure that nothing changed if totem is not found', () => {
-      const id = randomUUID()
+      const id = testNonExistentId
       const changed = deleteTotem(id)
       expect(changed).toBe(false)
     })

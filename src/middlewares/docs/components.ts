@@ -35,9 +35,9 @@ export const components = {
       required: ['id'],
       properties: {
         id: {
-          type: 'string',
-          format: 'uuid',
-          example: 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
+          type: 'integer',
+          example: 1,
+          minimum: 1
         }
       }
     },
@@ -59,9 +59,9 @@ export const components = {
       required: ['id'],
       properties: {
         id: {
-          type: 'string',
-          format: 'uuid',
-          example: '65c3dc3d-ff7f-482c-b0f9-0758739f0a5f'
+          type: 'integer',
+          example: 1,
+          minimum: 1
         }
       }
     },
@@ -69,9 +69,9 @@ export const components = {
       required: ['totemId', 'numero', 'anoDeFabricacao', 'modelo'],
       properties: {
         totemId: {
-          type: 'string',
-          format: 'uuid',
-          example: '65c3dc3d-ff7f-482c-b0f9-0758739f0a5f'
+          type: 'integer',
+          example: 1,
+          minimum: 1
         },
         numero: {
           type: 'integer',
@@ -92,14 +92,14 @@ export const components = {
       required: ['id'],
       properties: {
         id: {
-          type: 'string',
-          format: 'uuid',
-          example: '35a371ed-8bb7-4b30-8f4f-310f31c3f576'
+          type: 'integer',
+          example: 1,
+          minimum: 1
         },
         bicicletaId: {
-          type: 'string',
-          format: 'uuid',
-          example: 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
+          type: 'integer',
+          example: 1,
+          minimum: 1
         },
         status: {
           type: 'string',
@@ -115,9 +115,9 @@ export const components = {
       in: 'path',
       name: 'id',
       schema: {
-        type: 'string',
-        format: 'uuid',
-        example: 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
+        type: 'integer',
+        example: 1,
+        minimum: 1
       },
       description: 'ID da bicicleta',
       required: true
@@ -126,9 +126,9 @@ export const components = {
       in: 'path',
       name: 'id',
       schema: {
-        type: 'string',
-        format: 'uuid',
-        example: '65c3dc3d-ff7f-482c-b0f9-0758739f0a5f'
+        type: 'integer',
+        example: 1,
+        minimum: 1
       },
       description: 'ID do totem',
       required: true
@@ -137,9 +137,9 @@ export const components = {
       in: 'path',
       name: 'id',
       schema: {
-        type: 'string',
-        format: 'uuid',
-        example: '35a371ed-8bb7-4b30-8f4f-310f31c3f576'
+        type: 'integer',
+        example: 1,
+        minimum: 1
       },
       description: 'ID da tranca',
       required: true

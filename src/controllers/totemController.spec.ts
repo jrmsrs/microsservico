@@ -2,13 +2,17 @@ import { makeSut } from '../utils/interceptor'
 import { getTotem, getTotemById, createTotem, updateTotem, deleteTotem } from './totemController'
 
 describe('Controller totemController', () => {
+  const testExistentId = 3
+  const testNonExistentId = -1
+  const testInvalidNumber = 'not-a-number'
+
   const testBody = {
     localizacao: 'Localização Teste',
     descricao: 'Descrição Teste'
   } as any
 
   const testExistentBody = {
-    id: '859f074e-e02e-427d-be61-8d87129c1bbd',
+    id: testExistentId,
     localizacao: 'Localização 3',
     descricao: 'Descrição 3'
   } as any
@@ -24,10 +28,6 @@ describe('Controller totemController', () => {
       code: 404, message: 'Totem não encontrado'
     }
   }
-
-  const testExistentId = '859f074e-e02e-427d-be61-8d87129c1bbd'
-  const testNonExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545070000'
-  const testInvalidId = 'not-uuid'
 
   const expectResCalledWith = (successStatus: any, res: any, expectStatus: any, expectRes?: any): void => {
     if (successStatus !== null) {
@@ -45,7 +45,8 @@ describe('Controller totemController', () => {
       const { req, res, next } = makeSut()
       getTotem(req, res, next)
       expectResCalledWith(
-        res.status, res.json, 200, expect.arrayContaining([testExistentBody])
+        res.status, res.json,
+        200, expect.arrayContaining([testExistentBody])
       )
     })
   })
@@ -55,16 +56,17 @@ describe('Controller totemController', () => {
       const { req, res, next } = makeSut(testExistentId)
       getTotemById(req, res, next)
       expectResCalledWith(
-        res.status, res.json, 200, expect.objectContaining(testExistentBody)
+        res.status, res.json,
+        200, expect.objectContaining(testExistentBody)
       )
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
-      const { req, res, next } = makeSut(testInvalidId)
+      const { req, res, next } = makeSut(testInvalidNumber)
       getTotemById(req, res, next)
       expectResCalledWith(
-        null, next, 400,
-        expect.objectContaining(errorBody.invalidId)
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -93,9 +95,10 @@ describe('Controller totemController', () => {
       const { req, res, next } = makeSut(null, body)
       createTotem(req, res, next)
       expectResCalledWith(
-        res.status, res.json, 201, expect.objectContaining({
+        res.status, res.json,
+        201, expect.objectContaining({
           ...req.body,
-          id: expect.any(String)
+          id: expect.any(Number)
         })
       )
     })
@@ -118,7 +121,8 @@ describe('Controller totemController', () => {
       const { req, res, next } = makeSut(testExistentId, body)
       updateTotem(req, res, next)
       expectResCalledWith(
-        res.status, res.json, 200, expect.objectContaining({
+        res.status, res.json,
+        200, expect.objectContaining({
           ...req.body, id: testExistentId
         })
       )
@@ -126,7 +130,7 @@ describe('Controller totemController', () => {
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
       const body = { ...testBody }
-      const { req, res, next } = makeSut(testInvalidId, body)
+      const { req, res, next } = makeSut(testInvalidNumber, body)
       updateTotem(req, res, next)
       expectResCalledWith(
         null, next, 400,
@@ -174,7 +178,7 @@ describe('Controller totemController', () => {
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
-      const { req, res, next } = makeSut(testInvalidId)
+      const { req, res, next } = makeSut(testInvalidNumber)
       deleteTotem(req, res, next)
       expectResCalledWith(
         null, next, 400,

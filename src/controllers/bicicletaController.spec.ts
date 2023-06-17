@@ -11,7 +11,7 @@ describe('Controller bicicletaController', () => {
   } as any
 
   const testExistentBody = {
-    id: 'a2f43e3b-f0f6-40fd-a6a7-dea545076333',
+    id: 2,
     modelo: 'Modelo 2',
     marca: 'Marca 2',
     ano: '2021',
@@ -34,10 +34,9 @@ describe('Controller bicicletaController', () => {
     }
   }
 
-  const testExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
-  const testNonExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545070000'
-  const testInvalidId = 'not-uuid'
-  const testInvalidAno = 'not-a-number'
+  const testExistentId = 2
+  const testNonExistentId = -1
+  const testInvalidNumber = 'not-a-number'
 
   const expectResCalledWith = (successStatus: any, res: any, expectStatus: any = 200, expectRes?: any): void => {
     if (successStatus !== null) {
@@ -72,7 +71,7 @@ describe('Controller bicicletaController', () => {
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
-      const { req, res, next } = makeSut(testInvalidId)
+      const { req, res, next } = makeSut(testInvalidNumber)
       getBicicletaById(req, res, next)
       expectResCalledWith(
         null, next,
@@ -107,7 +106,7 @@ describe('Controller bicicletaController', () => {
       expectResCalledWith(
         res.status, res.json, 201, expect.objectContaining({
           ...req.body,
-          id: expect.any(String)
+          id: expect.any(Number)
         })
       )
     })
@@ -125,7 +124,7 @@ describe('Controller bicicletaController', () => {
 
     it('should return 400 BAD REQUEST if a field is not valid', () => {
       const body = { ...testBody }
-      body.ano = testInvalidAno
+      body.ano = testInvalidNumber
       const { req, res, next } = makeSut(null, body)
       createBicicleta(req, res, next)
       expectResCalledWith(
@@ -149,7 +148,7 @@ describe('Controller bicicletaController', () => {
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
       const body = { ...testBody }
-      const { req, res, next } = makeSut(testInvalidId, body)
+      const { req, res, next } = makeSut(testInvalidNumber, body)
       updateBicicleta(req, res, next)
       expectResCalledWith(
         null, next,
@@ -159,7 +158,7 @@ describe('Controller bicicletaController', () => {
 
     it('should return 400 BAD REQUEST if a field is not valid', () => {
       const body = { ...testBody }
-      body.ano = testInvalidAno
+      body.ano = testInvalidNumber
       const { req, res, next } = makeSut(testExistentId, body)
       updateBicicleta(req, res, next)
       expectResCalledWith(
@@ -208,7 +207,7 @@ describe('Controller bicicletaController', () => {
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
-      const { req, res, next } = makeSut(testInvalidId)
+      const { req, res, next } = makeSut(testInvalidNumber)
       deleteBicicleta(req, res, next)
       expectResCalledWith(
         null, next,

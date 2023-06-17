@@ -1,7 +1,5 @@
-import { UUID } from 'crypto'
-
 export interface Totem {
-  id: UUID
+  id?: number
   localizacao: string
   descricao: string
 }

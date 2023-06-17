@@ -1,19 +1,18 @@
-import { UUID } from 'crypto'
 import { Totem } from './totemModel.d'
 
 let totens: Totem[] = [
   {
-    id: '40dd16cd-c6de-4836-bb0f-cda7a8e24bf6',
+    id: 1,
     localizacao: 'Localização 1',
     descricao: 'Descrição 1'
   },
   {
-    id: '65c3dc3d-ff7f-482c-b0f9-0758739f0a5f',
+    id: 2,
     localizacao: 'Localização 2',
     descricao: 'Descrição 2'
   },
   {
-    id: '859f074e-e02e-427d-be61-8d87129c1bbd',
+    id: 3,
     localizacao: 'Localização 3',
     descricao: 'Descrição 3'
   }
@@ -23,15 +22,17 @@ export function getTotens (): Totem[] {
   return totens
 }
 
-export function getTotemById (id: UUID): Totem | undefined {
+export function getTotemById (id: number): Totem | undefined {
   return totens.find((totem) => totem.id === id)
 }
 
-export function createTotem (totem: Totem): void {
+export function createTotem (totem: Totem): number {
+  totem.id = (totens[totens.length - 1].id as number) + 1
   totens.push(totem)
+  return totem.id
 }
 
-export function updateTotem (id: UUID, updatedTotem: Totem): boolean {
+export function updateTotem (id: number, updatedTotem: Totem): boolean {
   const index = totens.findIndex((totem) => totem.id === id)
   if (index !== -1) {
     totens[index] = { ...updatedTotem, id }
@@ -40,7 +41,7 @@ export function updateTotem (id: UUID, updatedTotem: Totem): boolean {
   return false
 }
 
-export function deleteTotem (id: UUID): boolean {
+export function deleteTotem (id: number): boolean {
   const beforeLenght = totens.length
   totens = totens.filter((totem) => totem.id !== id)
   return beforeLenght !== totens.length

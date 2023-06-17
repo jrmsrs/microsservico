@@ -1,9 +1,7 @@
-import { UUID } from 'crypto'
-
 export interface Tranca {
-  id: UUID
-  totemId: UUID
-  bicicletaId?: UUID
+  id?: number
+  totemId: number
+  bicicletaId?: number
   numero: number
   anoDeFabricacao: string
   modelo: string
