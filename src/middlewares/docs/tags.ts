@@ -3,10 +3,6 @@
 
 export const tags = [
   {
-    name: 'Aplicação',
-    description: 'Endpoints gerais'
-  },
-  {
     name: 'Bicicleta',
     description: 'Endpoints para gerenciamento de bicicletas'
   },
