@@ -1,11 +1,9 @@
-import { mockNext, mockRequest, mockResponse } from '../utils/interceptor'
+import { makeSut } from '../utils/interceptor'
 import { notFoundController } from './notFoundController'
 
 describe('Controller notFoundController()', () => {
   it('should return 404 NOT FOUND', () => {
-    const req = mockRequest() as any
-    const res = mockResponse() as any
-    const next = mockNext as any
+    const { req, res, next } = makeSut()
 
     notFoundController(req, res, next)
 
@@ -16,10 +14,8 @@ describe('Controller notFoundController()', () => {
   })
 
   it('should force an internal error if throw query param is set to 1', () => {
-    const req = mockRequest() as any
+    const { req, res, next } = makeSut()
     req.query = { throw: '1' }
-    const res = mockResponse() as any
-    const next = mockNext as any
 
     notFoundController(req, res, next)
 

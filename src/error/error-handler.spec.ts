@@ -1,28 +1,22 @@
 import { makeError, errorHandler } from './error-handler'
-import { mockNext, mockRequest, mockResponse } from '../utils/interceptor'
+import { makeSut } from '../utils/interceptor'
 import { ApiError } from './ApiError'
 
 describe('ErrorHandling errorHandler', () => {
   it('should return 500 INTERNAL', () => {
-    const req = mockRequest() as any
-    const res = mockResponse() as any
-    const next = mockNext
+    const { req, res, next } = makeSut()
     errorHandler(Error(), req, res, next)
     expect(res.status).toHaveBeenCalledWith(500)
     expect(res.json).toHaveBeenCalledWith({ message: 'Something went wrong', code: 500 })
   })
   it('should return 400 BAD REQUEST', () => {
-    const req = mockRequest() as any
-    const res = mockResponse() as any
-    const next = mockNext
+    const { req, res, next } = makeSut()
     errorHandler(ApiError.badRequest(), req, res, next)
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.json).toHaveBeenCalledWith({ message: 'Bad request', code: 400 })
   })
   it('should return 404 NOT FOUND', () => {
-    const req = mockRequest() as any
-    const res = mockResponse() as any
-    const next = mockNext
+    const { req, res, next } = makeSut()
     errorHandler(ApiError.notFound(), req, res, next)
     expect(res.status).toHaveBeenCalledWith(404)
     expect(res.json).toHaveBeenCalledWith({ message: 'Not found', code: 404 })

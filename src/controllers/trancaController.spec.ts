@@ -1,4 +1,4 @@
-import { mockNext, mockRequest, mockResponse } from '../utils/interceptor'
+import { makeSut } from '../utils/interceptor'
 import { getTranca, getTrancaById, createTranca, updateTranca, deleteTranca } from './trancaController'
 
 describe('Controller trancaController', () => {
@@ -20,56 +20,47 @@ describe('Controller trancaController', () => {
     localizacao: 'Localização 1'
   } as any
 
+  const errorBody = {
+    invalidId: {
+      code: 400, message: 'ID inválido'
+    },
+    invalidFK: {
+      code: 400, message: 'TotemID inválido / não encontrado'
+    },
+    mandatoryNotFilled: {
+      code: 400, message: 'Campos obrigatórios não preenchidos'
+    },
+    invalidField: {
+      code: 400, message: 'Algum campo foi preenchido com caracter(es) inválido(s)'
+    },
+    notFound: {
+      code: 404, message: 'Tranca não encontrada'
+    }
+  }
+
   const testExistentId = '6100f40d-5d5d-4178-85ba-4c8cc6be002b'
   const testNonExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545070000'
   const testInvalidId = 'not-uuid'
   const testInvalidAno = 'not-a-number'
   const testInvalidTokenId = '99dd16cd-c6de-4836-bb0f-cda7a8e24b99'
 
-  const expectResCalledBody = (res: any, status: any = 200, body?: any): void => {
-    expect(res.status).toHaveBeenCalledWith(status)
-    if (body !== undefined) {
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining(body))
-    } else {
-      expect(res.json).toHaveBeenCalled()
+  const expectResCalledWith = (successStatus: any, res: any, expectStatus: any, expectRes?: any): void => {
+    if (successStatus !== null) {
+      expect(successStatus).toHaveBeenCalledWith(expectStatus)
     }
-  }
-
-  const expectResCalledArrayContaning = (res: any, status: any = 200, body?: any): void => {
-    expect(res.status).toHaveBeenCalledWith(status)
-    if (body !== undefined) {
-      expect(res.json).toHaveBeenCalledWith(expect.arrayContaining([body]))
+    if (expectRes !== undefined) {
+      expect(res).toHaveBeenCalledWith(expectRes)
     } else {
-      expect(res.json).toHaveBeenCalled()
+      expect(res).toHaveBeenCalled()
     }
-  }
-
-  const expectNextCalledWith = (res: any, next: any, code: any = 200, message?: any): void => {
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code,
-        message
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled()
-    expect(res.json).not.toHaveBeenCalled()
-  }
-
-  const makeSut = (id?: any, body?: any): { req: any, res: any, next: any } => {
-    const req = mockRequest() as any
-    req.params.id = id
-    req.body = body
-    const res = mockResponse() as any
-    const next = mockNext as any
-    return { req, res, next }
   }
 
   describe('Controller getTranca', () => {
     it('should return 200 OK and a list of trancas', () => {
       const { req, res, next } = makeSut()
       getTranca(req, res, next)
-      expectResCalledArrayContaning(
-        res, 200, testExistentBody
+      expectResCalledWith(
+        res.status, res.json, 200, expect.arrayContaining([testExistentBody])
       )
     })
   })
@@ -78,35 +69,35 @@ describe('Controller trancaController', () => {
     it('should return 200 OK and a tranca', () => {
       const { req, res, next } = makeSut(testExistentId)
       getTrancaById(req, res, next)
-      expectResCalledBody(
-        res, 200, testExistentBody
+      expectResCalledWith(
+        res.status, res.json, 200, expect.objectContaining(testExistentBody)
       )
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
       const { req, res, next } = makeSut(testInvalidId)
       getTrancaById(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
       const { req, res, next } = makeSut(null)
       getTrancaById(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 404 NOT FOUND if uuid is valid but doesn\'t match any tranca', () => {
       const { req, res, next } = makeSut(testNonExistentId)
       getTrancaById(req, res, next)
-      expectNextCalledWith(
-        res, next, 404,
-        'Tranca não encontrada'
+      expectResCalledWith(
+        null, next, 404,
+        expect.objectContaining(errorBody.notFound)
       )
     })
   })
@@ -116,12 +107,13 @@ describe('Controller trancaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(null, body)
       createTranca(req, res, next)
-      expectResCalledBody(
-        res, 201, {
+      expectResCalledWith(
+        res.status, res.json, 201, expect.objectContaining({
           ...req.body,
           id: expect.any(String),
           localizacao: 'Localização 1'
         })
+      )
     })
 
     it('should return 400 BAD REQUEST if a mandatory field is not provided', () => {
@@ -129,9 +121,9 @@ describe('Controller trancaController', () => {
       delete body.modelo
       const { req, res, next } = makeSut(null, body)
       createTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Campos obrigatórios não preenchidos'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.mandatoryNotFilled)
       )
     })
 
@@ -140,9 +132,9 @@ describe('Controller trancaController', () => {
       body.anoDeFabricacao = testInvalidAno
       const { req, res, next } = makeSut(null, body)
       createTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Algum campo foi preenchido com caracter(es) inválido(s)'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidField)
       )
     })
 
@@ -151,9 +143,9 @@ describe('Controller trancaController', () => {
       body.totemId = testInvalidTokenId
       const { req, res, next } = makeSut(null, body)
       createTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'TotemID inválido / não encontrado'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidFK)
       )
     })
   })
@@ -163,10 +155,10 @@ describe('Controller trancaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(testExistentId, body)
       updateTranca(req, res, next)
-      expectResCalledBody(
-        res, 200, {
+      expectResCalledWith(
+        res.status, res.json, 200, expect.objectContaining({
           ...req.body, id: testExistentId
-        }
+        })
       )
     })
 
@@ -174,9 +166,9 @@ describe('Controller trancaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(testInvalidId, body)
       updateTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -185,9 +177,9 @@ describe('Controller trancaController', () => {
       body.anoDeFabricacao = testInvalidAno
       const { req, res, next } = makeSut(testExistentId, body)
       updateTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Algum campo foi preenchido com caracter(es) inválido(s)'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidField)
       )
     })
 
@@ -195,9 +187,9 @@ describe('Controller trancaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(null, body)
       updateTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -205,9 +197,9 @@ describe('Controller trancaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(testNonExistentId, body)
       updateTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 404,
-        'Tranca não encontrada'
+      expectResCalledWith(
+        null, next, 404,
+        expect.objectContaining(errorBody.notFound)
       )
     })
 
@@ -216,9 +208,9 @@ describe('Controller trancaController', () => {
       delete body.modelo
       const { req, res, next } = makeSut(testExistentId, body)
       updateTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Campos obrigatórios não preenchidos'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.mandatoryNotFilled)
       )
     })
 
@@ -227,9 +219,9 @@ describe('Controller trancaController', () => {
       body.totemId = testInvalidTokenId
       const { req, res, next } = makeSut(testExistentId, body)
       updateTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'TotemID inválido / não encontrado'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidFK)
       )
     })
   })
@@ -238,33 +230,33 @@ describe('Controller trancaController', () => {
     it('should return 200 OK', () => {
       const { req, res, next } = makeSut(testExistentId)
       deleteTranca(req, res, next)
-      expectResCalledBody(res)
+      expectResCalledWith(res.status, res.json, 200)
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
       const { req, res, next } = makeSut(testInvalidId)
       deleteTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
       const { req, res, next } = makeSut(null)
       deleteTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next, 400,
+        expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 404 NOT FOUND if uuid is valid but doesn\'t match any tranca', () => {
       const { req, res, next } = makeSut(testNonExistentId)
       deleteTranca(req, res, next)
-      expectNextCalledWith(
-        res, next, 404,
-        'Tranca não encontrada'
+      expectResCalledWith(
+        null, next, 404,
+        expect.objectContaining(errorBody.notFound)
       )
     })
   })

@@ -1,10 +1,9 @@
-import { mockRequest, mockResponse } from '../utils/interceptor'
+import { makeSut } from '../utils/interceptor'
 import { mainController } from './mainController'
 
 describe('Controller mainController()', () => {
   it('should return a welcome message', () => {
-    const req = mockRequest() as any
-    const res = mockResponse() as any
+    const { req, res } = makeSut()
 
     mainController(req, res)
 

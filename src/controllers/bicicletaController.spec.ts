@@ -1,4 +1,4 @@
-import { mockNext, mockRequest, mockResponse } from '../utils/interceptor'
+import { makeSut } from '../utils/interceptor'
 import { getBicicleta, getBicicletaById, createBicicleta, updateBicicleta, deleteBicicleta } from './bicicletaController'
 
 describe('Controller bicicletaController', () => {
@@ -19,55 +19,44 @@ describe('Controller bicicletaController', () => {
     status: 'disponivel'
   } as any
 
+  const errorBody = {
+    invalidId: {
+      code: 400, message: 'ID inválido'
+    },
+    mandatoryNotFilled: {
+      code: 400, message: 'Campos obrigatórios não preenchidos'
+    },
+    invalidField: {
+      code: 400, message: 'Algum campo foi preenchido com caracter(es) inválido(s)'
+    },
+    notFound: {
+      code: 404, message: 'Bicicleta não encontrada'
+    }
+  }
+
   const testExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545076333'
   const testNonExistentId = 'a2f43e3b-f0f6-40fd-a6a7-dea545070000'
   const testInvalidId = 'not-uuid'
   const testInvalidAno = 'not-a-number'
 
-  const expectResCalledBody = (res: any, status: any = 200, body?: any): void => {
-    expect(res.status).toHaveBeenCalledWith(status)
-    if (body !== undefined) {
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining(body))
-    } else {
-      expect(res.json).toHaveBeenCalled()
+  const expectResCalledWith = (successStatus: any, res: any, expectStatus: any = 200, expectRes?: any): void => {
+    if (successStatus !== null) {
+      expect(successStatus).toHaveBeenCalledWith(expectStatus)
     }
-  }
-
-  const expectResCalledArrayContaning = (res: any, status: any = 200, body?: any): void => {
-    expect(res.status).toHaveBeenCalledWith(status)
-    if (body !== undefined) {
-      expect(res.json).toHaveBeenCalledWith(expect.arrayContaining([body]))
+    if (expectRes !== undefined) {
+      expect(res).toHaveBeenCalledWith(expectRes)
     } else {
-      expect(res.json).toHaveBeenCalled()
+      expect(res).toHaveBeenCalled()
     }
-  }
-
-  const expectNextCalledWith = (res: any, next: any, code: any = 200, message?: any): void => {
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({
-        code,
-        message
-      })
-    )
-    expect(res.status).not.toHaveBeenCalled()
-    expect(res.json).not.toHaveBeenCalled()
-  }
-
-  const makeSut = (id?: any, body?: any): { req: any, res: any, next: any } => {
-    const req = mockRequest() as any
-    req.params.id = id
-    req.body = body
-    const res = mockResponse() as any
-    const next = mockNext as any
-    return { req, res, next }
   }
 
   describe('Controller getBicicleta', () => {
     it('should return 200 OK and a list of bicicletas', () => {
       const { req, res, next } = makeSut()
       getBicicleta(req, res, next)
-      expectResCalledArrayContaning(
-        res, 200, testExistentBody
+      expectResCalledWith(
+        res.status, res.json,
+        200, expect.arrayContaining([testExistentBody])
       )
     })
   })
@@ -76,35 +65,36 @@ describe('Controller bicicletaController', () => {
     it('should return 200 OK and a bicicleta', () => {
       const { req, res, next } = makeSut(testExistentId)
       getBicicletaById(req, res, next)
-      expectResCalledBody(
-        res, 200, testExistentBody
+      expectResCalledWith(
+        res.status, res.json,
+        200, expect.objectContaining(testExistentBody)
       )
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
       const { req, res, next } = makeSut(testInvalidId)
       getBicicletaById(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
       const { req, res, next } = makeSut(null)
       getBicicletaById(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 404 NOT FOUND if uuid is valid but doesn\'t match any bicicleta', () => {
       const { req, res, next } = makeSut(testNonExistentId)
       getBicicletaById(req, res, next)
-      expectNextCalledWith(
-        res, next, 404,
-        'Bicicleta não encontrada'
+      expectResCalledWith(
+        null, next,
+        404, expect.objectContaining(errorBody.notFound)
       )
     })
   })
@@ -114,11 +104,12 @@ describe('Controller bicicletaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(null, body)
       createBicicleta(req, res, next)
-      expectResCalledBody(
-        res, 201, {
+      expectResCalledWith(
+        res.status, res.json, 201, expect.objectContaining({
           ...req.body,
           id: expect.any(String)
         })
+      )
     })
 
     it('should return 400 BAD REQUEST if a mandatory field is not provided', () => {
@@ -126,9 +117,9 @@ describe('Controller bicicletaController', () => {
       delete body.modelo
       const { req, res, next } = makeSut(null, body)
       createBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Campos obrigatórios não preenchidos'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.mandatoryNotFilled)
       )
     })
 
@@ -137,9 +128,9 @@ describe('Controller bicicletaController', () => {
       body.ano = testInvalidAno
       const { req, res, next } = makeSut(null, body)
       createBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Algum campo foi preenchido com caracter(es) inválido(s)'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidField)
       )
     })
   })
@@ -149,10 +140,10 @@ describe('Controller bicicletaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(testExistentId, body)
       updateBicicleta(req, res, next)
-      expectResCalledBody(
-        res, 200, {
+      expectResCalledWith(
+        res.status, res.json, 200, expect.objectContaining({
           ...req.body, id: testExistentId
-        }
+        })
       )
     })
 
@@ -160,9 +151,9 @@ describe('Controller bicicletaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(testInvalidId, body)
       updateBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -171,9 +162,9 @@ describe('Controller bicicletaController', () => {
       body.ano = testInvalidAno
       const { req, res, next } = makeSut(testExistentId, body)
       updateBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Algum campo foi preenchido com caracter(es) inválido(s)'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidField)
       )
     })
 
@@ -181,9 +172,9 @@ describe('Controller bicicletaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(null, body)
       updateBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
@@ -191,9 +182,9 @@ describe('Controller bicicletaController', () => {
       const body = { ...testBody }
       const { req, res, next } = makeSut(testNonExistentId, body)
       updateBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 404,
-        'Bicicleta não encontrada'
+      expectResCalledWith(
+        null, next,
+        404, expect.objectContaining(errorBody.notFound)
       )
     })
 
@@ -202,9 +193,9 @@ describe('Controller bicicletaController', () => {
       delete body.modelo
       const { req, res, next } = makeSut(testExistentId, body)
       updateBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'Campos obrigatórios não preenchidos'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.mandatoryNotFilled)
       )
     })
   })
@@ -213,33 +204,33 @@ describe('Controller bicicletaController', () => {
     it('should return 200 OK', () => {
       const { req, res, next } = makeSut(testExistentId)
       deleteBicicleta(req, res, next)
-      expectResCalledBody(res)
+      expectResCalledWith(res.status, res.json, 200)
     })
 
     it('should return 400 BAD REQUEST if id doesn\'t match UUID format', () => {
       const { req, res, next } = makeSut(testInvalidId)
       deleteBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
       const { req, res, next } = makeSut(null)
       deleteBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 400,
-        'ID inválido'
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.invalidId)
       )
     })
 
     it('should return 404 NOT FOUND if uuid is valid but doesn\'t match any bicicleta', () => {
       const { req, res, next } = makeSut(testNonExistentId)
       deleteBicicleta(req, res, next)
-      expectNextCalledWith(
-        res, next, 404,
-        'Bicicleta não encontrada'
+      expectResCalledWith(
+        null, next,
+        404, expect.objectContaining(errorBody.notFound)
       )
     })
   })

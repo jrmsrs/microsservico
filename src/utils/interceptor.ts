@@ -12,7 +12,7 @@ interface MockResponse {
   json: jest.Mock<any, any>
 }
 
-export const mockRequest = (): MockRequest => {
+const mockRequest = (): MockRequest => {
   const req: MockRequest = {
     body: jest.fn().mockReturnThis(),
     params: jest.fn().mockReturnThis()
@@ -20,13 +20,22 @@ export const mockRequest = (): MockRequest => {
   return req
 }
 
-export const mockResponse = (): MockResponse => {
+const mockResponse = (): MockResponse => {
   const res: MockResponse = {
     send: jest.fn().mockReturnThis(),
     status: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis()
   }
   return res
+}
+
+export const makeSut = (id?: any, body?: any): { req: any, res: any, next: any } => {
+  const req = mockRequest() as any
+  req.params.id = id
+  req.body = body
+  const res = mockResponse() as any
+  const next = mockNext as any
+  return { req, res, next }
 }
 
 export const mockNext = jest.fn()
