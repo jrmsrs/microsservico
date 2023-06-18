@@ -44,7 +44,8 @@ export function getBicicletaById (id: number): Bicicleta | undefined {
 }
 
 export function createBicicleta (bicicleta: Bicicleta): number {
-  bicicleta.id = (bicicletas[bicicletas.length - 1].id as number) + 1
+  // get last id and add 1, if undefined, set id to 1
+  bicicleta.id = ((bicicletas[bicicletas.length - 1].id as number) ?? 0) + 1
   bicicletas.push(bicicleta)
   return bicicleta.id
 }

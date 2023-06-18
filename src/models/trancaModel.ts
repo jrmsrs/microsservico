@@ -70,7 +70,8 @@ export function getTrancaById (id: number): Tranca | undefined {
 }
 
 export function createTranca (tranca: Tranca): number {
-  tranca.id = (trancas[trancas.length - 1].id as number) + 1
+  // get last id and add 1, if undefined, set id to 1
+  tranca.id = ((trancas[trancas.length - 1].id as number) ?? 0) + 1
   trancas.push(tranca)
   return tranca.id
 }

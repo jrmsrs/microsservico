@@ -27,7 +27,8 @@ export function getTotemById (id: number): Totem | undefined {
 }
 
 export function createTotem (totem: Totem): number {
-  totem.id = (totens[totens.length - 1].id as number) + 1
+  // get last id and add 1, if undefined, set id to 1
+  totem.id = ((totens[totens.length - 1].id as number) ?? 0) + 1
   totens.push(totem)
   return totem.id
 }
