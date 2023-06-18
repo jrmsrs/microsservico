@@ -3,12 +3,17 @@ import {
   getTrancaById,
   createTranca,
   updateTranca,
-  deleteTranca
+  deleteTranca,
+  insertBicicleta,
+  removeBicicleta
 } from './trancaModel'
 
 const testExistentId = 5
 const testNonExistentId = -1
 const testExistentTotemId = 3
+const testFreeTrancaId = 4
+const testExistentBicicletaId = 3
+const testNonExistentBicicletaId = -1
 
 describe('Model trancaModel', () => {
   describe('Model getTrancas', () => {
@@ -87,6 +92,41 @@ describe('Model trancaModel', () => {
     it('should ensure that nothing changed if tranca is not found', () => {
       const id = testNonExistentId
       const changed = deleteTranca(id)
+      expect(changed).toBe(false)
+    })
+  })
+
+  describe('Model insertBicicleta', () => {
+    it('should insert a bicicleta into the tranca with the given ID if found', () => {
+      const id = testFreeTrancaId
+      const changed = insertBicicleta(testFreeTrancaId, testExistentBicicletaId)
+      const result = getTrancaById(id)
+      expect(changed).toBe(true)
+      expect(result?.bicicletaId).toBe(testExistentBicicletaId)
+    })
+    it('should ensure that nothing changed if tranca is not found', () => {
+      const id = testNonExistentId
+      const changed = insertBicicleta(id, testExistentBicicletaId)
+      expect(changed).toBe(false)
+    })
+    it('should ensure that nothing changed if bicicleta is not found', () => {
+      const id = testExistentId
+      const changed = insertBicicleta(id, testNonExistentBicicletaId)
+      expect(changed).toBe(false)
+    })
+  })
+
+  describe('Model removeBicicleta', () => {
+    it('should remove a bicicleta from the tranca with the given ID if found', () => {
+      const id = 1
+      const changed = removeBicicleta(id)
+      const result = getTrancaById(id)
+      expect(changed).toBe(true)
+      expect(result?.bicicletaId).toBeUndefined()
+    })
+    it('should ensure that nothing changed if tranca is not found', () => {
+      const id = testNonExistentId
+      const changed = removeBicicleta(id)
       expect(changed).toBe(false)
     })
   })

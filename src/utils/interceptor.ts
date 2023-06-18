@@ -35,6 +35,9 @@ const mockResponse = (): MockResponse => {
 }
 
 export const makeSut = (id?: any, body?: any): { req: any, res: any, next: any } => {
+  jest.clearAllMocks()
+  jest.resetAllMocks()
+  jest.resetModules()
   const req = mockRequest() as any
   req.params.id = id
   req.body = body

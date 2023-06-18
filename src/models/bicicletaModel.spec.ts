@@ -15,12 +15,13 @@ describe('Model bicicletaModel', () => {
     it('should get a list of bicicletas', () => {
       const mockBicicletas: Bicicleta[] = []
       // Cria um array de bicicletas com os mesmos ids gerados anteriormente
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 4; i++) {
         mockBicicletas.push({
           id: i + 1, modelo: `Modelo ${i + 1}`, marca: `Marca ${i + 1}`, ano: '2021', numero: i + 1, status: 'disponivel'
         })
       }
       mockBicicletas[2].status = 'em uso'
+      mockBicicletas[3].status = 'nova'
       const result = getBicicletas()
       expect(result).toEqual(mockBicicletas)
     })
