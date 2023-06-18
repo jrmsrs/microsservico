@@ -2,17 +2,13 @@ import { makeSut } from '../utils/interceptor'
 import { getTotem, getTotemById, createTotem, updateTotem, deleteTotem } from './totemController'
 
 describe('Controller totemController', () => {
-  const testExistentId = 3
-  const testNonExistentId = -1
-  const testInvalidNumber = 'not-a-number'
-
   const testBody = {
     localizacao: 'Localização Teste',
     descricao: 'Descrição Teste'
   } as any
 
   const testExistentBody = {
-    id: testExistentId,
+    id: 3,
     localizacao: 'Localização 3',
     descricao: 'Descrição 3'
   } as any
@@ -28,6 +24,10 @@ describe('Controller totemController', () => {
       code: 404, message: 'Totem não encontrado'
     }
   }
+
+  const testExistentId = 3
+  const testNonExistentId = -1
+  const testInvalidNumber = 'not-a-number'
 
   const expectResCalledWith = (successStatus: any, res: any, expectStatus: any, expectRes?: any): void => {
     if (successStatus !== null) {
@@ -71,7 +71,7 @@ describe('Controller totemController', () => {
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
-      const { req, res, next } = makeSut(null)
+      const { req, res, next } = makeSut()
       getTotemById(req, res, next)
       expectResCalledWith(
         null, next, 400,
@@ -92,7 +92,7 @@ describe('Controller totemController', () => {
   describe('Controller createTotem', () => {
     it('should return 201 CREATED and created the totem', () => {
       const body = { ...testBody }
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       createTotem(req, res, next)
       expectResCalledWith(
         res.status, res.json,
@@ -106,7 +106,7 @@ describe('Controller totemController', () => {
     it('should return 400 BAD REQUEST if a mandatory field is not provided', () => {
       const body = { ...testBody }
       delete body.localizacao
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       createTotem(req, res, next)
       expectResCalledWith(
         null, next, 400,
@@ -140,7 +140,7 @@ describe('Controller totemController', () => {
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
       const body = { ...testBody }
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       updateTotem(req, res, next)
       expectResCalledWith(
         null, next, 400,
@@ -187,7 +187,7 @@ describe('Controller totemController', () => {
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
-      const { req, res, next } = makeSut(null)
+      const { req, res, next } = makeSut()
       deleteTotem(req, res, next)
       expectResCalledWith(
         null, next, 400,

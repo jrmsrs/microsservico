@@ -2,11 +2,6 @@ import { makeSut } from '../utils/interceptor'
 import { getTranca, getTrancaById, createTranca, updateTranca, deleteTranca } from './trancaController'
 
 describe('Controller trancaController', () => {
-  const testExistentId = 6
-  const testNonExistentId = -1
-  const testInvalidNumber = 'not-a-number'
-  const testInvalidTokenId = -1
-
   const testBody = {
     totemId: 3,
     numero: 2,
@@ -42,6 +37,11 @@ describe('Controller trancaController', () => {
       code: 404, message: 'Tranca não encontrada'
     }
   }
+
+  const testExistentId = 6
+  const testNonExistentId = -1
+  const testInvalidNumber = 'not-a-number'
+  const testInvalidTokenId = -1
 
   const expectResCalledWith = (successStatus: any, res: any, expectStatus: any, expectRes?: any): void => {
     if (successStatus !== null) {
@@ -85,7 +85,7 @@ describe('Controller trancaController', () => {
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
-      const { req, res, next } = makeSut(null)
+      const { req, res, next } = makeSut()
       getTrancaById(req, res, next)
       expectResCalledWith(
         null, next,
@@ -106,13 +106,14 @@ describe('Controller trancaController', () => {
   describe('Controller createTranca', () => {
     it('should return 201 CREATED and created the tranca', () => {
       const body = { ...testBody }
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       createTranca(req, res, next)
       expectResCalledWith(
         res.status, res.json, 201, expect.objectContaining({
           ...req.body,
           id: expect.any(Number),
-          localizacao: 'Localização 3'
+          localizacao: 'Localização 3',
+          status: 'nova'
         })
       )
     })
@@ -120,7 +121,7 @@ describe('Controller trancaController', () => {
     it('should return 400 BAD REQUEST if a mandatory field is not provided', () => {
       const body = { ...testBody }
       delete body.modelo
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       createTranca(req, res, next)
       expectResCalledWith(
         null, next,
@@ -131,7 +132,7 @@ describe('Controller trancaController', () => {
     it('should return 400 BAD REQUEST if a field is not valid', () => {
       const body = { ...testBody }
       body.anoDeFabricacao = testInvalidNumber
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       createTranca(req, res, next)
       expectResCalledWith(
         null, next,
@@ -142,7 +143,7 @@ describe('Controller trancaController', () => {
     it('should return 400 BAD REQUEST if a foreignkey is invalid', () => {
       const body = { ...testBody }
       body.totemId = testInvalidTokenId
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       createTranca(req, res, next)
       expectResCalledWith(
         null, next,
@@ -186,7 +187,7 @@ describe('Controller trancaController', () => {
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
       const body = { ...testBody }
-      const { req, res, next } = makeSut(null, body)
+      const { req, res, next } = makeSut(undefined, body)
       updateTranca(req, res, next)
       expectResCalledWith(
         null, next,
@@ -244,7 +245,7 @@ describe('Controller trancaController', () => {
     })
 
     it('should return 400 BAD REQUEST if id is not provided', () => {
-      const { req, res, next } = makeSut(null)
+      const { req, res, next } = makeSut()
       deleteTranca(req, res, next)
       expectResCalledWith(
         null, next,
