@@ -101,8 +101,42 @@ router.put('/:id', updateBicicleta)
  */
 router.delete('/:id', deleteBicicleta)
 
+/**
+ * @swagger
+ * /bicicleta/integrarNaRede:
+ *   post:
+ *     tags: [Bicicleta]
+ *     summary: colocar uma bicicleta nova ou retornando de reparo de volta na rede de totens
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IntegrarBicicletaRede'
+ *     responses:
+ *       200:
+ *         description: Dados cadastrados
+ *       422:
+ *         description: Dados Inválidos (ex status inválido da bicicleta ou tranca)
+ */
 router.post('/integrarNaRede', integrarNaRede)
 
+/**
+ * @swagger
+ * /bicicleta/retirarDaRede:
+ *   post:
+ *     tags: [Bicicleta]
+ *     summary: retirar bicicleta para reparo ou aposentadoria
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RetirarBicicletaRede'
+ *     responses:
+ *       200:
+ *         description: Dados cadastrados
+ *       422:
+ *         description: Dados Inválidos (ex status inválido da bicicleta ou tranca)
+ */
 router.post('/retirarDaRede', retirarDaRede)
 
 export default router

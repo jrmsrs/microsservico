@@ -21,12 +21,6 @@ export const components = {
         numero: {
           type: 'integer',
           example: 1
-        },
-        status: {
-          type: 'string',
-          example: 'disponivel',
-          default: 'disponivel',
-          enum: ['disponivel', 'em uso', 'em reparo']
         }
       }
     },
@@ -100,12 +94,38 @@ export const components = {
           type: 'integer',
           example: 1,
           minimum: 1
+        }
+      }
+    },
+    IntegrarBicicletaRede: {
+      required: ['bicicletaId', 'trancaId', 'funcionarioId'],
+      properties: {
+        bicicletaId: {
+          type: 'integer',
+          example: 1,
+          minimum: 1
         },
-        status: {
+        trancaId: {
+          type: 'integer',
+          example: 1,
+          minimum: 1
+        },
+        funcionarioId: {
+          type: 'integer',
+          example: 1,
+          minimum: 1
+        }
+      }
+    },
+    RetirarBicicletaRede: {
+      required: ['statusAcaoReparador'],
+      allOf: [{ $ref: '#/components/schemas/IntegrarBicicletaRede' }],
+      properties: {
+        statusAcaoReparador: {
           type: 'string',
-          example: 'disponivel',
-          default: 'disponivel',
-          enum: ['disponivel', 'em uso', 'em reparo']
+          example: 'em reparo',
+          default: 'em reparo',
+          enum: ['em reparo', 'aposentada']
         }
       }
     }
