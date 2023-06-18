@@ -4,7 +4,9 @@ import {
   getBicicletaById,
   createBicicleta,
   updateBicicleta,
-  deleteBicicleta
+  deleteBicicleta,
+  integrarNaRede,
+  retirarDaRede
 } from '../controllers/bicicletaController'
 
 const router = express.Router()
@@ -98,5 +100,9 @@ router.put('/:id', updateBicicleta)
  *         description: Bicicleta não encontrada
  */
 router.delete('/:id', deleteBicicleta)
+
+router.post('/integrarNaRede', integrarNaRede)
+
+router.post('/retirarDaRede', retirarDaRede)
 
 export default router

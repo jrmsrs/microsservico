@@ -89,3 +89,23 @@ export function deleteTranca (id: number): boolean {
   trancas = trancas.filter((tranca) => tranca.id !== id)
   return beforeLenght !== trancas.length
 }
+
+export function insertBicicleta (id: number, bicicletaId: number): boolean {
+  const index = trancas.findIndex((tranca) => tranca.id === id)
+  if (index !== -1) {
+    trancas[index].bicicletaId = bicicletaId
+    trancas[index].status = 'em uso'
+    return true
+  }
+  return false
+}
+
+export function removeBicicleta (id: number): boolean {
+  const index = trancas.findIndex((tranca) => tranca.id === id)
+  if (index !== -1) {
+    trancas[index].bicicletaId = undefined
+    trancas[index].status = 'disponivel'
+    return true
+  }
+  return false
+}

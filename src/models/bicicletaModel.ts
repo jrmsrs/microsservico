@@ -24,6 +24,14 @@ let bicicletas: Bicicleta[] = [
     ano: '2021',
     numero: 3,
     status: 'em uso'
+  },
+  {
+    id: 4,
+    modelo: 'Modelo 4',
+    marca: 'Marca 4',
+    ano: '2021',
+    numero: 4,
+    status: 'nova'
   }
 ]
 
