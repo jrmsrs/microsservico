@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as Bicicleta from '../models/bicicletaModel'
 import * as Tranca from '../models/trancaModel'
 import { ApiError } from '../error/ApiError'
+import { status } from '../enums/statusBicicletaEnum'
 
 export const getBicicleta = (req: Request, res: Response, next: NextFunction): void => {
   const bicicletas = Bicicleta.getBicicletas()
@@ -32,7 +33,7 @@ export const createBicicleta = (req: Request, res: Response, next: NextFunction)
     next(ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
     return
   }
-  const id = Bicicleta.createBicicleta({ modelo, marca, ano, numero, status: 'nova' })
+  const id = Bicicleta.createBicicleta({ modelo, marca, ano, numero, status: status.NOVA })
   res.status(201).json(Bicicleta.getBicicletaById(id))
 }
 
@@ -95,17 +96,17 @@ export const integrarNaRede = (req: Request, res: Response, next: NextFunction):
     next(ApiError.notFound('Tranca não encontrada'))
     return
   }
-  if (tranca.status !== 'disponivel') {
+  if (tranca.status !== status.DISPONIVEL) {
     next(ApiError.badRequest('Tranca indisponível'))
     return
   }
-  if (bicicleta.status !== 'em reparo' && bicicleta.status !== 'nova') {
+  if (bicicleta.status !== status.EM_REPARO && bicicleta.status !== status.NOVA) {
     next(ApiError.badRequest('Bicicleta já integrada na rede'))
     return
   }
-  Bicicleta.updateBicicleta(Number(bicicletaId), { ...bicicleta, status: 'disponivel' })
+  Bicicleta.updateBicicleta(Number(bicicletaId), { ...bicicleta, status: status.DISPONIVEL })
   Tranca.insertBicicleta(Number(trancaId), Number(bicicletaId))
-  res.status(200).json({ ...bicicleta, status: 'disponivel' })
+  res.status(200).json({ ...bicicleta, status: status.DISPONIVEL })
 }
 
 export const retirarDaRede = (req: Request, res: Response, next: NextFunction): void => {
@@ -127,7 +128,7 @@ export const retirarDaRede = (req: Request, res: Response, next: NextFunction): 
     next(ApiError.notFound('Bicicleta não encontrada'))
     return
   }
-  if (bicicleta.status !== 'disponivel') {
+  if (bicicleta.status !== status.DISPONIVEL) {
     next(ApiError.badRequest('Bicicleta não disponível'))
     return
   }

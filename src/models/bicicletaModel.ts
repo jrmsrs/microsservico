@@ -1,4 +1,5 @@
 import { Bicicleta } from './bicicletaModel.d'
+import { status } from '../enums/statusBicicletaEnum'
 
 let bicicletas: Bicicleta[] = [
   {
@@ -7,7 +8,7 @@ let bicicletas: Bicicleta[] = [
     marca: 'Marca 1',
     ano: '2021',
     numero: 1,
-    status: 'disponivel'
+    status: status.DISPONIVEL
   },
   {
     id: 2,
@@ -15,7 +16,7 @@ let bicicletas: Bicicleta[] = [
     marca: 'Marca 2',
     ano: '2021',
     numero: 2,
-    status: 'disponivel'
+    status: status.DISPONIVEL
   },
   {
     id: 3,
@@ -23,7 +24,7 @@ let bicicletas: Bicicleta[] = [
     marca: 'Marca 3',
     ano: '2021',
     numero: 3,
-    status: 'em uso'
+    status: status.EM_USO
   },
   {
     id: 4,
@@ -31,7 +32,7 @@ let bicicletas: Bicicleta[] = [
     marca: 'Marca 4',
     ano: '2021',
     numero: 4,
-    status: 'nova'
+    status: status.NOVA
   }
 ]
 

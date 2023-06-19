@@ -1,5 +1,6 @@
 // Define os componentes com schemas e parâmetros que serão utilizados em toda documentação da API
 // https://swagger.io/docs/specification/components/
+import { status as statusBicicleta } from '../../enums/statusBicicletaEnum'
 
 export const components = {
   schemas: {
@@ -123,9 +124,9 @@ export const components = {
       properties: {
         statusAcaoReparador: {
           type: 'string',
-          example: 'em reparo',
-          default: 'em reparo',
-          enum: ['em reparo', 'aposentada']
+          example: statusBicicleta.EM_REPARO,
+          default: statusBicicleta.EM_REPARO,
+          enum: [statusBicicleta.EM_REPARO, statusBicicleta.APOSENTADA]
         }
       }
     }

@@ -8,6 +8,7 @@ import {
   integrarNaRede,
   retirarDaRede
 } from './bicicletaController'
+import { status } from '../enums/statusBicicletaEnum'
 
 describe('Controller bicicletaController', () => {
   const testBody = {
@@ -71,7 +72,7 @@ describe('Controller bicicletaController', () => {
     marca: 'Marca 4',
     ano: '2021',
     numero: 4,
-    status: 'nova'
+    status: status.NOVA
   } as any
 
   const testIntegrarNaRedeBody = {
@@ -84,7 +85,7 @@ describe('Controller bicicletaController', () => {
     bicicletaId: testExistentId,
     funcionarioId: testExistentFuncionarioId,
     trancaId: testBusyTrancaId,
-    statusAcaoReparador: 'aposentada'
+    statusAcaoReparador: status.APOSENTADA
   } as any
 
   const expectResCalledWith = (successStatus: any, res: any, expectStatus: any = 200, expectRes?: any): void => {
@@ -105,7 +106,7 @@ describe('Controller bicicletaController', () => {
       integrarNaRede(req, res, next)
       expectResCalledWith(
         res.status, res.json,
-        200, expect.objectContaining({ ...testExistentNewBody, status: 'disponivel' })
+        200, expect.objectContaining({ ...testExistentNewBody, status: status.DISPONIVEL })
       )
     })
 
@@ -177,7 +178,7 @@ describe('Controller bicicletaController', () => {
       retirarDaRede(req, res, next)
       expectResCalledWith(
         res.status, res.json,
-        200, expect.objectContaining({ id: 1, status: 'aposentada' })
+        200, expect.objectContaining({ id: 1, status: status.APOSENTADA })
       )
     })
 
@@ -309,7 +310,7 @@ describe('Controller bicicletaController', () => {
       expectResCalledWith(
         res.status, res.json, 201, expect.objectContaining({
           ...req.body,
-          status: 'nova',
+          status: status.NOVA,
           id: expect.any(Number)
         })
       )

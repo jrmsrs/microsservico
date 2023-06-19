@@ -1,5 +1,6 @@
 import { makeSut } from '../utils/interceptor'
 import { getTranca, getTrancaById, createTranca, updateTranca, deleteTranca } from './trancaController'
+import { status } from '../enums/statusTrancaEnum'
 
 describe('Controller trancaController', () => {
   const testBody = {
@@ -7,7 +8,7 @@ describe('Controller trancaController', () => {
     numero: 2,
     anoDeFabricacao: '2020',
     modelo: 'Modelo Teste',
-    status: 'disponivel'
+    status: status.DISPONIVEL
   } as any
 
   const testExistentBody = {
@@ -16,7 +17,7 @@ describe('Controller trancaController', () => {
     numero: 6,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 6',
-    status: 'disponivel',
+    status: status.DISPONIVEL,
     localizacao: 'Localização 3'
   } as any
 
@@ -113,7 +114,7 @@ describe('Controller trancaController', () => {
           ...req.body,
           id: expect.any(Number),
           localizacao: 'Localização 3',
-          status: 'nova'
+          status: status.NOVA
         })
       )
     })

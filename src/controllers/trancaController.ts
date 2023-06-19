@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import * as Tranca from '../models/trancaModel'
 import * as Totem from '../models/totemModel'
 import { ApiError } from '../error/ApiError'
+import { status } from '../enums/statusTrancaEnum'
 
 export const getTranca = (req: Request, res: Response, next: NextFunction): void => {
   const trancas = Tranca.getTrancas() as any[]
@@ -41,7 +42,7 @@ export const createTranca = (req: Request, res: Response, next: NextFunction): v
     next(ApiError.badRequest('TotemID inválido / não encontrado'))
     return
   }
-  const id = Tranca.createTranca({ totemId, numero, anoDeFabricacao, modelo, status: 'nova' })
+  const id = Tranca.createTranca({ totemId, numero, anoDeFabricacao, modelo, status: status.NOVA })
   const tranca = Tranca.getTrancaById(id) as any
   tranca.localizacao = totem.localizacao
   res.status(201).json(tranca)
@@ -91,4 +92,16 @@ export const deleteTranca = (req: Request, res: Response, next: NextFunction): v
   }
   Tranca.deleteTranca(id)
   res.status(200).json()
+}
+
+export const integrarNaRede = (req: Request, res: Response, next: NextFunction): void => {
+}
+
+export const retirarDaRede = (req: Request, res: Response, next: NextFunction): void => {
+}
+
+export const trancar = (req: Request, res: Response, next: NextFunction): void => {
+}
+
+export const destrancar = (req: Request, res: Response, next: NextFunction): void => {
 }

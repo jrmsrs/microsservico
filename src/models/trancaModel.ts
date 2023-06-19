@@ -1,4 +1,5 @@
 import { Tranca } from './trancaModel.d'
+import { status } from '../enums/statusTrancaEnum'
 
 let trancas: Tranca[] = [
   {
@@ -8,7 +9,7 @@ let trancas: Tranca[] = [
     numero: 1,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 1',
-    status: 'em uso'
+    status: status.EM_USO
   },
   {
     id: 2,
@@ -17,7 +18,7 @@ let trancas: Tranca[] = [
     numero: 2,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 2',
-    status: 'em uso'
+    status: status.EM_USO
   },
   {
     id: 3,
@@ -25,7 +26,7 @@ let trancas: Tranca[] = [
     numero: 3,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 3',
-    status: 'disponivel'
+    status: status.DISPONIVEL
   },
   {
     id: 4,
@@ -33,7 +34,7 @@ let trancas: Tranca[] = [
     numero: 4,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 4',
-    status: 'disponivel'
+    status: status.DISPONIVEL
   },
   {
     id: 5,
@@ -41,7 +42,7 @@ let trancas: Tranca[] = [
     numero: 5,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 5',
-    status: 'disponivel'
+    status: status.DISPONIVEL
   },
   {
     id: 6,
@@ -49,7 +50,7 @@ let trancas: Tranca[] = [
     numero: 6,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 6',
-    status: 'disponivel'
+    status: status.DISPONIVEL
   },
   {
     id: 7,
@@ -57,7 +58,7 @@ let trancas: Tranca[] = [
     numero: 7,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 7',
-    status: 'disponivel'
+    status: status.DISPONIVEL
   }
 ]
 
@@ -95,7 +96,7 @@ export function insertBicicleta (id: number, bicicletaId: number): boolean {
   const index = trancas.findIndex((tranca) => tranca.id === id)
   if (index !== -1) {
     trancas[index].bicicletaId = bicicletaId
-    trancas[index].status = 'em uso'
+    trancas[index].status = status.EM_USO
     return true
   }
   return false
@@ -105,7 +106,7 @@ export function removeBicicleta (id: number): boolean {
   const index = trancas.findIndex((tranca) => tranca.id === id)
   if (index !== -1) {
     trancas[index].bicicletaId = undefined
-    trancas[index].status = 'disponivel'
+    trancas[index].status = status.DISPONIVEL
     return true
   }
   return false

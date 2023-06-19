@@ -7,6 +7,7 @@ import {
   insertBicicleta,
   removeBicicleta
 } from './trancaModel'
+import { status } from '../enums/statusTrancaEnum'
 
 const testExistentId = 5
 const testNonExistentId = -1
@@ -57,7 +58,7 @@ describe('Model trancaModel', () => {
 
   describe('Model createTranca', () => {
     it('should create a new tranca', () => {
-      const mockTranca = { modelo: 'Modelo 1', totemId: testExistentTotemId, anoDeFabricacao: '2021', numero: 1, status: 'disponivel' }
+      const mockTranca = { modelo: 'Modelo 1', totemId: testExistentTotemId, anoDeFabricacao: '2021', numero: 1, status: status.DISPONIVEL }
       const id = createTranca(mockTranca)
       const result = getTrancaById(id)
       expect(result).toEqual(mockTranca)
@@ -67,7 +68,7 @@ describe('Model trancaModel', () => {
   describe('Model updateTranca', () => {
     it('should update the tranca with the given ID if found', () => {
       const id = testExistentId
-      const mockTranca = { id, modelo: 'Modelo X', totemId: testExistentTotemId, anoDeFabricacao: '2021', numero: 9, status: 'disponivel' }
+      const mockTranca = { id, modelo: 'Modelo X', totemId: testExistentTotemId, anoDeFabricacao: '2021', numero: 9, status: status.DISPONIVEL }
       const changed = updateTranca(id, mockTranca)
       const result = getTrancaById(id)
       expect(changed).toBe(true)
@@ -75,7 +76,7 @@ describe('Model trancaModel', () => {
     })
     it('should ensure that nothing changed if tranca is not found', () => {
       const id = testNonExistentId
-      const mockTranca = { id, modelo: 'Modelo X', totemId: testExistentTotemId, anoDeFabricacao: '2021', numero: 9, status: 'disponivel' }
+      const mockTranca = { id, modelo: 'Modelo X', totemId: testExistentTotemId, anoDeFabricacao: '2021', numero: 9, status: status.DISPONIVEL }
       const changed = updateTranca(id, mockTranca)
       expect(changed).toBe(false)
     })
