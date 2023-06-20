@@ -54,11 +54,17 @@ let trancas: Tranca[] = [
   },
   {
     id: 7,
-    totemId: 3,
     numero: 7,
     anoDeFabricacao: '2020',
     modelo: 'Modelo 7',
-    status: status.DISPONIVEL
+    status: status.NOVA
+  },
+  {
+    id: 8,
+    numero: 8,
+    anoDeFabricacao: '2020',
+    modelo: 'Modelo 8',
+    status: status.APOSENTADA
   }
 ]
 

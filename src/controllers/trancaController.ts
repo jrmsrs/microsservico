@@ -143,6 +143,10 @@ export const retirarDaRede = (req: Request, res: Response, next: NextFunction): 
     next(ApiError.notFound('Tranca não encontrada'))
     return
   }
+  if (tranca.status !== status.DISPONIVEL) {
+    next(ApiError.badRequest('Tranca não disponível, verifique se está conectada a uma bicicleta ou se já foi retirada da rede'))
+    return
+  }
   const totem = Totem.getTotemById(totemId)
   if (totem === undefined) {
     next(ApiError.notFound('Totem não encontrado'))

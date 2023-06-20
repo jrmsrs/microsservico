@@ -134,7 +134,7 @@ export const retirarDaRede = (req: Request, res: Response, next: NextFunction): 
     return
   }
   if (bicicleta.status !== status.DISPONIVEL) {
-    next(ApiError.badRequest('Bicicleta não disponível'))
+    next(ApiError.badRequest('Bicicleta não disponível, verifique se está conectada a uma tranca ou se já foi retirada da rede'))
     return
   }
   const tranca = Tranca.getTrancaById(Number(trancaId))

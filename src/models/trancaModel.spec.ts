@@ -21,7 +21,7 @@ describe('Model trancaModel', () => {
     it('should get a list of trancas', () => {
       const mockTrancas: any[] = []
       // Cria um array de trancas com os mesmos ids gerados anteriormente
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < 8; i++) {
         mockTrancas.push({
           id: i + 1, modelo: `Modelo ${i + 1}`, anoDeFabricacao: '2020', numero: i + 1
         })
