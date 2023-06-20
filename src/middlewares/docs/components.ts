@@ -162,6 +162,19 @@ export const components = {
           enum: [statusTranca.EM_REPARO, statusTranca.APOSENTADA]
         }
       }
+    },
+    Trancar: {
+      required: ['bicicletaId'],
+      properties: {
+        bicicletaId: {
+          type: 'integer',
+          example: 1,
+          minimum: 1
+        }
+      }
+    },
+    Destrancar: {
+      allOf: [{ $ref: '#/components/schemas/Trancar' }]
     }
   },
   parameters: {

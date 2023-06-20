@@ -40,7 +40,7 @@ describe('Controller bicicletaController', () => {
       code: 404, message: 'Bicicleta não encontrada'
     },
     notDisponivel: {
-      code: 400, message: 'Bicicleta não disponível'
+      code: 400, message: 'Bicicleta não disponível, verifique se está conectada a uma tranca ou se já foi retirada da rede'
     },
     trancaNotFound: {
       code: 404, message: 'Tranca não encontrada'

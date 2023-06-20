@@ -48,7 +48,7 @@ export function getBicicletas (): Bicicleta[] {
   return bicicletas
 }
 
-export function getBicicletaById (id: number): Bicicleta | undefined {
+export function getBicicletaById (id?: number): Bicicleta | undefined {
   return bicicletas.find((bicicleta) => bicicleta.id === id)
 }
 

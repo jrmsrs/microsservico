@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import * as Tranca from '../models/trancaModel'
 import * as Totem from '../models/totemModel'
+import * as Bicicleta from '../models/bicicletaModel'
 import { ApiError } from '../error/ApiError'
 import { status } from '../enums/statusTrancaEnum'
+import { status as statusBicicleta } from '../enums/statusBicicletaEnum'
 
 export const getTranca = (req: Request, res: Response, next: NextFunction): void => {
   const trancas = Tranca.getTrancas() as any[]
@@ -160,4 +162,76 @@ export const retirarDaRede = (req: Request, res: Response, next: NextFunction): 
   Tranca.updateTranca(trancaId, { ...tranca, status: statusAcaoReparador, totemId: undefined })
   const updatedTranca = Tranca.getTrancaById(trancaId)
   res.status(200).json({ ...updatedTranca, localizacao: 'Não instalada' })
+}
+
+export const trancar = (req: Request, res: Response, next: NextFunction): void => {
+  const { bicicletaId } = req.body
+  const trancaId = Number(req.params.id)
+  if (bicicletaId === undefined || trancaId === undefined) {
+    next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
+    return
+  }
+  if (isNaN(bicicletaId) || isNaN(trancaId)) {
+    next(ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
+    return
+  }
+  const bicicleta = Bicicleta.getBicicletaById(bicicletaId)
+  if (bicicleta === undefined) {
+    next(ApiError.notFound('Bicicleta não encontrada'))
+    return
+  }
+  if (bicicleta.status !== statusBicicleta.EM_USO) {
+    next(ApiError.badRequest('Bicicleta já está trancada ou não está integrada na rede'))
+    return
+  }
+  const tranca = Tranca.getTrancaById(trancaId)
+  if (tranca === undefined) {
+    next(ApiError.notFound('Tranca não encontrada'))
+    return
+  }
+  if (tranca.status !== status.DISPONIVEL) {
+    next(ApiError.badRequest('Tranca não disponível, verifique se está conectada a uma bicicleta ou se foi retirada da rede'))
+    return
+  }
+  Tranca.updateTranca(trancaId, { ...tranca, status: status.EM_USO, bicicletaId })
+  Bicicleta.updateBicicleta(bicicletaId, { ...bicicleta, status: statusBicicleta.DISPONIVEL })
+  const updatedTranca = Tranca.getTrancaById(trancaId) as any
+  updatedTranca.localizacao = Totem.getTotemById(tranca.totemId)?.localizacao ?? 'Não instalada'
+  res.status(200).json(updatedTranca)
+}
+
+export const destrancar = (req: Request, res: Response, next: NextFunction): void => {
+  const { bicicletaId } = req.body
+  const trancaId = Number(req.params.id)
+  if (trancaId === undefined || bicicletaId === undefined) {
+    next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
+    return
+  }
+  if (isNaN(trancaId) || isNaN(bicicletaId)) {
+    next(ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
+    return
+  }
+  const bicicleta = Bicicleta.getBicicletaById(bicicletaId)
+  if (bicicleta === undefined) {
+    next(ApiError.notFound('Bicicleta não encontrada'))
+    return
+  }
+  if (bicicleta.status !== statusBicicleta.DISPONIVEL) {
+    next(ApiError.badRequest('Bicicleta não disponível, verifique se está trancada ou se foi retirada da rede'))
+    return
+  }
+  const tranca = Tranca.getTrancaById(trancaId)
+  if (tranca === undefined) {
+    next(ApiError.notFound('Tranca não encontrada'))
+    return
+  }
+  if (tranca.status !== status.EM_USO) {
+    next(ApiError.badRequest('Tranca não está trancada'))
+    return
+  }
+  Tranca.updateTranca(trancaId, { ...tranca, status: status.DISPONIVEL, bicicletaId: undefined })
+  Bicicleta.updateBicicleta(bicicletaId, { ...bicicleta, status: statusBicicleta.EM_USO })
+  const updatedTranca = Tranca.getTrancaById(trancaId) as any
+  updatedTranca.localizacao = Totem.getTotemById(tranca.totemId)?.localizacao ?? 'Não instalada'
+  res.status(200).json(updatedTranca)
 }

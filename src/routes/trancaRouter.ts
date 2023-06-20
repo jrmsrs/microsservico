@@ -142,4 +142,50 @@ router.post('/integrarNaRede', integrarNaRede)
  */
 router.post('/retirarDaRede', retirarDaRede)
 
+/**
+ * @swagger
+ * /tranca/{id}/trancar:
+ *   post:
+ *     tags: [Tranca]
+ *     summary: Realiza o trancamento da tranca alterando o status da mesma de acordo. Caso receba o id da bicleta no corpo do post também altera o status da mesma e associa a tranca à bicicleta
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Trancar'
+ *     parameters:
+ *      - $ref: '#/components/parameters/idTranca'
+ *     responses:
+ *       200:
+ *         description: Ação bem sucedida
+ *       404:
+ *         description: Tranca não encontrada
+ *       422:
+ *         description: Dados Inválidos ou tranca já se encontra trancada
+ */
+router.post('/:id/trancar', trancar)
+
+/**
+ * @swagger
+ * /tranca/{id}/destrancar:
+ *   post:
+ *     tags: [Tranca]
+ *     summary: Realiza o destrancamento da tranca alterando o status da mesma de acordo. Caso receba o id da bicleta no corpo do post também altera o status da mesma e desassocia a tranca à bicicleta.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Destrancar'
+ *     parameters:
+ *      - $ref: '#/components/parameters/idTranca'
+ *     responses:
+ *       200:
+ *         description: Ação bem sucedida
+ *       404:
+ *         description: Tranca não encontrada
+ *       422:
+ *         description: Dados Inválidos
+ */
+router.post('/:id/destrancar', destrancar)
+
 export default router
