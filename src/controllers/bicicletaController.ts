@@ -101,6 +101,10 @@ export const integrarNaRede = (req: Request, res: Response, next: NextFunction):
     return
   }
   if (bicicleta.status !== status.EM_REPARO && bicicleta.status !== status.NOVA) {
+    if (bicicleta.status === status.APOSENTADA) {
+      next(ApiError.badRequest('Bicicleta aposentada'))
+      return
+    }
     next(ApiError.badRequest('Bicicleta já integrada na rede'))
     return
   }

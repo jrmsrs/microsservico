@@ -51,6 +51,9 @@ describe('Controller bicicletaController', () => {
     alreadyIntegrated: {
       code: 400, message: 'Bicicleta já integrada na rede'
     },
+    retireeBicicleta: {
+      code: 400, message: 'Bicicleta aposentada'
+    },
     invalidAcaoStatus: {
       code: 400, message: 'Status inválido, deve ser "em reparo" ou "aposentada"'
     },
@@ -147,6 +150,16 @@ describe('Controller bicicletaController', () => {
       expectResCalledWith(
         null, next,
         400, expect.objectContaining(errorBody.alreadyIntegrated)
+      )
+    })
+
+    it('should return 400 BAD REQUEST if bicicleta status=aposentada', () => {
+      const body = { ...testIntegrarNaRedeBody, bicicletaId: 5, trancaId: 6 }
+      const { req, res, next } = makeSut(undefined, body)
+      integrarNaRede(req, res, next)
+      expectResCalledWith(
+        null, next,
+        400, expect.objectContaining(errorBody.retireeBicicleta)
       )
     })
 

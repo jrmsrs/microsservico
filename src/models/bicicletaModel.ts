@@ -33,6 +33,14 @@ let bicicletas: Bicicleta[] = [
     ano: '2021',
     numero: 4,
     status: status.NOVA
+  },
+  {
+    id: 5,
+    modelo: 'Modelo 5',
+    marca: 'Marca 5',
+    ano: '2021',
+    numero: 5,
+    status: status.APOSENTADA
   }
 ]
 

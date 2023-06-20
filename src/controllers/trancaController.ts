@@ -110,6 +110,10 @@ export const integrarNaRede = (req: Request, res: Response, next: NextFunction):
     return
   }
   if (tranca.status !== status.NOVA && tranca.status !== status.EM_REPARO) {
+    if (tranca.status === status.APOSENTADA) {
+      next(ApiError.badRequest('Tranca aposentada'))
+      return
+    }
     next(ApiError.badRequest('Tranca já integrada na rede'))
     return
   }
