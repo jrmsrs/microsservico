@@ -1,6 +1,6 @@
 export interface Tranca {
   id?: number
-  totemId: number
+  totemId?: number
   bicicletaId?: number
   numero: number
   anoDeFabricacao: string

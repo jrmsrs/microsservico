@@ -22,7 +22,10 @@ export function getTotens (): Totem[] {
   return totens
 }
 
-export function getTotemById (id: number): Totem | undefined {
+export function getTotemById (id?: number): Totem | undefined {
+  if (id === undefined) {
+    return undefined
+  }
   return totens.find((totem) => totem.id === id)
 }
 

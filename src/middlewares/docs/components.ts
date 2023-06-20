@@ -1,6 +1,7 @@
 // Define os componentes com schemas e parâmetros que serão utilizados em toda documentação da API
 // https://swagger.io/docs/specification/components/
 import { status as statusBicicleta } from '../../enums/statusBicicletaEnum'
+import { status as statusTranca } from '../../enums/statusTrancaEnum'
 
 export const components = {
   schemas: {
@@ -127,6 +128,38 @@ export const components = {
           example: statusBicicleta.EM_REPARO,
           default: statusBicicleta.EM_REPARO,
           enum: [statusBicicleta.EM_REPARO, statusBicicleta.APOSENTADA]
+        }
+      }
+    },
+    IntegrarTrancaRede: {
+      required: ['totemId', 'trancaId', 'funcionarioId'],
+      properties: {
+        trancaId: {
+          type: 'integer',
+          example: 1,
+          minimum: 1
+        },
+        totemId: {
+          type: 'integer',
+          example: 1,
+          minimum: 1
+        },
+        funcionarioId: {
+          type: 'integer',
+          example: 1,
+          minimum: 1
+        }
+      }
+    },
+    RetirarTrancaRede: {
+      required: ['statusAcaoReparador'],
+      allOf: [{ $ref: '#/components/schemas/IntegrarTrancaRede' }],
+      properties: {
+        statusAcaoReparador: {
+          type: 'string',
+          example: statusTranca.EM_REPARO,
+          default: statusTranca.EM_REPARO,
+          enum: [statusTranca.EM_REPARO, statusTranca.APOSENTADA]
         }
       }
     }

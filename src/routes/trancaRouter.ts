@@ -5,7 +5,11 @@ import {
   getTrancaById,
   createTranca,
   updateTranca,
-  deleteTranca
+  deleteTranca,
+  integrarNaRede,
+  retirarDaRede,
+  trancar,
+  destrancar
 } from '../controllers/trancaController'
 
 const router = express.Router()
@@ -99,5 +103,43 @@ router.put('/:id', updateTranca)
  *         description: Tranca não encontrada
  */
 router.delete('/:id', deleteTranca)
+
+/**
+ * @swagger
+ * /tranca/integrarNaRede:
+ *   post:
+ *     tags: [Tranca]
+ *     summary: colocar uma tranca nova ou retornando de reparo de volta na rede de totens
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/IntegrarTrancaRede'
+ *     responses:
+ *       200:
+ *         description: Dados cadastrados
+ *       422:
+ *         description: Dados Inválidos (ex status inválido da bicicleta ou tranca)
+ */
+router.post('/integrarNaRede', integrarNaRede)
+
+/**
+ * @swagger
+ * /tranca/retirarDaRede:
+ *   post:
+ *     tags: [Tranca]
+ *     summary: retirar tranca para reparo ou aposentadoria
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RetirarTrancaRede'
+ *     responses:
+ *       200:
+ *         description: Dados cadastrados
+ *       422:
+ *         description: Dados Inválidos (ex status inválido da bicicleta ou tranca)
+ */
+router.post('/retirarDaRede', retirarDaRede)
 
 export default router

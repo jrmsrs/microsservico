@@ -104,6 +104,7 @@ export const integrarNaRede = (req: Request, res: Response, next: NextFunction):
     next(ApiError.badRequest('Bicicleta já integrada na rede'))
     return
   }
+  // verifica se funcionarioId é válido
   Bicicleta.updateBicicleta(Number(bicicletaId), { ...bicicleta, status: status.DISPONIVEL })
   Tranca.insertBicicleta(Number(trancaId), Number(bicicletaId))
   res.status(200).json({ ...bicicleta, status: status.DISPONIVEL })
@@ -141,6 +142,7 @@ export const retirarDaRede = (req: Request, res: Response, next: NextFunction): 
     next(ApiError.badRequest('Tranca não está conectada a bicicleta'))
     return
   }
+  // verifica se funcionarioId é válido
   Bicicleta.updateBicicleta(Number(bicicletaId), { ...bicicleta, status: statusAcaoReparador })
   Tranca.removeBicicleta(Number(trancaId))
   res.status(200).json({ ...bicicleta, status: statusAcaoReparador })

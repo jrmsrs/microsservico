@@ -107,13 +107,14 @@ describe('Controller trancaController', () => {
   describe('Controller createTranca', () => {
     it('should return 201 CREATED and created the tranca', () => {
       const body = { ...testBody }
+      delete body.totemId
       const { req, res, next } = makeSut(undefined, body)
       createTranca(req, res, next)
       expectResCalledWith(
         res.status, res.json, 201, expect.objectContaining({
           ...req.body,
           id: expect.any(Number),
-          localizacao: 'Localização 3',
+          localizacao: 'Não instalada',
           status: status.NOVA
         })
       )
@@ -138,17 +139,6 @@ describe('Controller trancaController', () => {
       expectResCalledWith(
         null, next,
         400, expect.objectContaining(errorBody.invalidField)
-      )
-    })
-
-    it('should return 400 BAD REQUEST if a foreignkey is invalid', () => {
-      const body = { ...testBody }
-      body.totemId = testInvalidTokenId
-      const { req, res, next } = makeSut(undefined, body)
-      createTranca(req, res, next)
-      expectResCalledWith(
-        null, next,
-        400, expect.objectContaining(errorBody.invalidFK)
       )
     })
   })
