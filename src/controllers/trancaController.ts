@@ -40,8 +40,8 @@ export const getTrancaById = async (req: Request, res: Response, next: NextFunct
     tranca.localizacao = await TotemService.getTotemById(Number(tranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
     res.status(200).json(tranca)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
-      next(ApiError.notFound('Tranca não encontrada'))
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
     }
   }
 }
@@ -87,12 +87,8 @@ export const updateTranca = async (req: Request, res: Response, next: NextFuncti
     tranca.localizacao = await TotemService.getTotemById(Number(tranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
     res.status(200).json(tranca)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
-      next(ApiError.notFound('Totem não encontrado'))
-      return
-    }
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
-      next(ApiError.notFound('Tranca não encontrada'))
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
     }
   }
 }
@@ -108,8 +104,8 @@ export const deleteTranca = async (req: Request, res: Response, next: NextFuncti
     await TrancaService.deleteTranca(id)
     res.status(200).json()
   } catch (error) {
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
-      next(ApiError.notFound('Tranca não encontrada'))
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
     }
   }
 }
@@ -137,12 +133,8 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
     tranca.localizacao = await TotemService.getTotemById(totemId).then((totem) => totem.localizacao).catch(() => 'Não instalada')
     res.status(200).json(tranca)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
-      next(ApiError.notFound('Totem não encontrado'))
-      return
-    }
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
-      next(ApiError.notFound('Tranca não encontrada'))
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
     }
   }
 }
@@ -178,12 +170,8 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
     tranca.localizacao = 'Não instalada'
     res.status(200).json(tranca)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
-      next(ApiError.notFound('Totem não encontrado'))
-      return
-    }
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
-      next(ApiError.notFound('Tranca não encontrada'))
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
     }
   }
 }
@@ -216,12 +204,8 @@ export const trancar = async (req: Request, res: Response, next: NextFunction): 
     tranca.localizacao = await TotemService.getTotemById(Number(oldTranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
     res.status(200).json(tranca)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
-      next(ApiError.notFound('Bicicleta não encontrada'))
-      return
-    }
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
-      next(ApiError.notFound('Tranca não encontrada'))
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
     }
   }
 }
@@ -254,12 +238,8 @@ export const destrancar = async (req: Request, res: Response, next: NextFunction
     tranca.localizacao = await TotemService.getTotemById(Number(oldTranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
     res.status(200).json(tranca)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
-      next(ApiError.notFound('Bicicleta não encontrada'))
-      return
-    }
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
-      next(ApiError.notFound('Tranca não encontrada'))
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
     }
   }
 }

@@ -37,9 +37,6 @@ const mockResponse = (): MockResponse => {
 }
 
 export const doMock = (id?: any, body?: any): { req: Request, res: Response, next: NextFunction } => {
-  jest.clearAllMocks()
-  jest.resetAllMocks()
-  jest.resetModules()
   const req = mockRequest() as any
   req.params.id = id
   req.body = body
