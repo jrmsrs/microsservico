@@ -1,6 +1,8 @@
 // interceptador para mockar express reqs e resps
 // Referência: https://stackoverflow.com/a/57081471
 
+import { Request, Response, NextFunction } from 'express'
+
 interface MockRequest {
   body: jest.Mock<any, any>
   params: jest.Mock<any, any>
@@ -34,7 +36,7 @@ const mockResponse = (): MockResponse => {
   return res
 }
 
-export const makeSut = (id?: any, body?: any): { req: any, res: any, next: any } => {
+export const doMock = (id?: any, body?: any): { req: Request, res: Response, next: NextFunction } => {
   jest.clearAllMocks()
   jest.resetAllMocks()
   jest.resetModules()

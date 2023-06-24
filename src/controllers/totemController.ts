@@ -1,65 +1,76 @@
 import { NextFunction, Request, Response } from 'express'
-import * as Totem from '../models/totemModel'
+import * as TotemService from '../services/totemService'
 import { ApiError } from '../error/ApiError'
 
-export const getTotem = (req: Request, res: Response, next: NextFunction): void => {
-  const totens = Totem.getTotens()
+// @ts-expect-error - TS1064
+export const getTotem = async (req: Request, res: Response, next: NextFunction): void => {
+  const totens = await TotemService.getAllTotems()
   res.status(200).json(totens)
 }
 
-export const getTotemById = (req: Request, res: Response, next: NextFunction): void => {
+// @ts-expect-error - TS1064
+export const getTotemById = async (req: Request, res: Response, next: NextFunction): void => {
   const id = Number(req.params.id)
   if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  const totem = Totem.getTotemById(id)
-  if (Totem.getTotemById(id) === undefined) {
-    next(ApiError.notFound('Totem não encontrado'))
-    return
+  try {
+    const totem = await TotemService.getTotemById(id)
+    res.status(200).json(totem)
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Totem não encontrado') {
+      next(ApiError.notFound(error.message))
+    }
   }
-  res.status(200).json(totem)
 }
 
-export const createTotem = (req: Request, res: Response, next: NextFunction): void => {
+// @ts-expect-error - TS1064
+export const createTotem = async (req: Request, res: Response, next: NextFunction): void => {
   const { descricao, localizacao } = req.body
   if (descricao === undefined || localizacao === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
   }
-  const id = Totem.createTotem({ descricao, localizacao })
-  res.status(201).json(Totem.getTotemById(id))
+  const totem = await TotemService.createTotem({ descricao, localizacao })
+  res.status(201).json(totem)
 }
 
-export const updateTotem = (req: Request, res: Response, next: NextFunction): void => {
+// @ts-expect-error - TS1064
+export const updateTotem = async (req: Request, res: Response, next: NextFunction): void => {
   const id = Number(req.params.id)
   const { descricao, localizacao } = req.body
   if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  if (Totem.getTotemById(id) === undefined) {
-    next(ApiError.notFound('Totem não encontrado'))
-    return
-  }
   if (descricao === undefined || localizacao === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
   }
-  Totem.updateTotem(id, { id, descricao, localizacao })
-  res.status(200).json(Totem.getTotemById(id))
+  try {
+    const totem = await TotemService.updateTotem(id, { id, descricao, localizacao })
+    res.status(200).json(totem)
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Totem não encontrado') {
+      next(ApiError.notFound(error.message))
+    }
+  }
 }
 
-export const deleteTotem = (req: Request, res: Response, next: NextFunction): void => {
+// @ts-expect-error - TS1064
+export const deleteTotem = async (req: Request, res: Response, next: NextFunction): void => {
   const id = Number(req.params.id)
   if (isNaN(id)) {
     next(ApiError.badRequest('ID inválido'))
     return
   }
-  if (Totem.getTotemById(id) === undefined) {
-    next(ApiError.notFound('Totem não encontrado'))
-    return
+  try {
+    await TotemService.deleteTotem(id)
+    res.status(200).json()
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Totem não encontrado') {
+      next(ApiError.notFound(error.message))
+    }
   }
-  Totem.deleteTotem(id)
-  res.status(200).json()
 }

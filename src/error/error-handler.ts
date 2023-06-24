@@ -6,8 +6,6 @@ import { ApiError, ErrorSchema } from './ApiError'
 export const errorHandler = (
   err: Error | ApiError, req: Request, res: Response, next: NextFunction
 ): void => {
-  console.log(err)
-
   if (err instanceof ApiError) {
     res.status(err.code).json(makeError(err.code, err.message as string))
     return

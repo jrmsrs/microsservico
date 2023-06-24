@@ -1,4 +1,4 @@
-import { Tranca } from './trancaModel.d'
+import { Tranca } from './tranca'
 import { status } from '../enums/statusTrancaEnum'
 
 let trancas: Tranca[] = [
@@ -68,52 +68,35 @@ let trancas: Tranca[] = [
   }
 ]
 
-export function getTrancas (): Tranca[] {
+export async function getTrancas (): Promise<Tranca[]> {
   return trancas
 }
 
-export function getTrancaById (id: number): Tranca | undefined {
-  return trancas.find((tranca) => tranca.id === id)
+export async function getTrancaById (id: number): Promise<Tranca> {
+  const tranca = trancas.find((tranca) => tranca.id === id)
+  if (tranca !== undefined) return tranca
+  throw new Error('Tranca não encontrada')
 }
 
-export function createTranca (tranca: Tranca): number {
+export async function createTranca (tranca: Tranca, array = trancas): Promise<Tranca> {
   // get last id and add 1, if undefined, set id to 1
-  tranca.id = ((trancas[trancas.length - 1].id as number) ?? 0) + 1
-  trancas.push(tranca)
-  return tranca.id
+  tranca.id = (array[array.length - 1]?.id ?? 0) + 1
+  array.push(tranca)
+  return tranca
 }
 
-export function updateTranca (id: number, updatedTranca: Tranca): boolean {
+export async function updateTranca (id: number, updatedTranca: Tranca): Promise<Tranca> {
   const index = trancas.findIndex((tranca) => tranca.id === id)
   if (index !== -1) {
     trancas[index] = { ...updatedTranca, id }
-    return true
+    return trancas[index]
   }
-  return false
+  throw new Error('Tranca não encontrada')
 }
 
-export function deleteTranca (id: number): boolean {
+export async function deleteTranca (id: number): Promise<void> {
   const beforeLenght = trancas.length
   trancas = trancas.filter((tranca) => tranca.id !== id)
-  return beforeLenght !== trancas.length
-}
-
-export function insertBicicleta (id: number, bicicletaId: number): boolean {
-  const index = trancas.findIndex((tranca) => tranca.id === id)
-  if (index !== -1) {
-    trancas[index].bicicletaId = bicicletaId
-    trancas[index].status = status.EM_USO
-    return true
-  }
-  return false
-}
-
-export function removeBicicleta (id: number): boolean {
-  const index = trancas.findIndex((tranca) => tranca.id === id)
-  if (index !== -1) {
-    trancas[index].bicicletaId = undefined
-    trancas[index].status = status.DISPONIVEL
-    return true
-  }
-  return false
+  if (beforeLenght !== trancas.length) return
+  throw new Error('Tranca não encontrada')
 }

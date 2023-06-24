@@ -1,7 +1,7 @@
-import { Bicicleta } from './bicicletaModel.d'
+import { Bicicleta } from './bicicleta'
 import { status } from '../enums/statusBicicletaEnum'
 
-let bicicletas: Bicicleta[] = [
+export let bicicletas: Bicicleta[] = [
   {
     id: 1,
     modelo: 'Modelo 1',
@@ -44,32 +44,35 @@ let bicicletas: Bicicleta[] = [
   }
 ]
 
-export function getBicicletas (): Bicicleta[] {
+export async function getBicicletas (): Promise<Bicicleta[]> {
   return bicicletas
 }
 
-export function getBicicletaById (id?: number): Bicicleta | undefined {
-  return bicicletas.find((bicicleta) => bicicleta.id === id)
+export async function getBicicletaById (id?: number): Promise<Bicicleta> {
+  const bicicleta = bicicletas.find((bicicleta) => bicicleta.id === id)
+  if (bicicleta !== undefined) return bicicleta
+  throw new Error('Bicicleta não encontrada')
 }
 
-export function createBicicleta (bicicleta: Bicicleta): number {
+export async function createBicicleta (bicicleta: Bicicleta, array = bicicletas): Promise<Bicicleta> {
   // get last id and add 1, if undefined, set id to 1
-  bicicleta.id = ((bicicletas[bicicletas.length - 1].id as number) ?? 0) + 1
-  bicicletas.push(bicicleta)
-  return bicicleta.id
+  bicicleta.id = (array[array.length - 1]?.id ?? 0) + 1
+  array.push(bicicleta)
+  return bicicleta
 }
 
-export function updateBicicleta (id: number, updatedBicicleta: Bicicleta): boolean {
+export async function updateBicicleta (id: number, updatedBicicleta: Bicicleta): Promise<Bicicleta> {
   const index = bicicletas.findIndex((bicicleta) => bicicleta.id === id)
   if (index !== -1) {
     bicicletas[index] = { ...updatedBicicleta, id }
-    return true
+    return bicicletas[index]
   }
-  return false
+  throw new Error('Bicicleta não encontrada')
 }
 
-export function deleteBicicleta (id: number): boolean {
+export async function deleteBicicleta (id: number): Promise<void> {
   const beforeLenght = bicicletas.length
   bicicletas = bicicletas.filter((bicicleta) => bicicleta.id !== id)
-  return beforeLenght !== bicicletas.length
+  if (beforeLenght !== bicicletas.length) return
+  throw new Error('Bicicleta não encontrada')
 }
