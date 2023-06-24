@@ -418,6 +418,60 @@ describe('trancaController', () => {
       await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, { ...tranca, bicicletaId: bicicleta.id, status: status.EM_USO, localizacao: totem.localizacao }, 200)
     })
+
+    it('should return ApiError with status 400 when body is missing a field', async () => {
+      const req = { params: { id: validId }, body: {} } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Campos obrigatórios não preenchidos'))
+    })
+
+    it('should return ApiError with status 400 when body has an invalid field', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: 'invalidId' } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
+    })
+
+    it('should return ApiError with status 400 when bicicleta status is not EM_USO', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Bicicleta já está trancada ou não está integrada na rede'))
+    })
+
+    it('should return ApiError with status 400 when tranca status is not DISPONIVEL', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.EM_USO })
+      await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Tranca não disponível, verifique se está conectada a uma bicicleta ou se foi retirada da rede'))
+    })
+
+    it('should return ApiError with status 404 when bicicleta is not found', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockRejectedValue(new Error('Bicicleta não encontrada'))
+      await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.notFound('Bicicleta não encontrada'))
+    })
+
+    it('should return ApiError with status 404 when tranca is not found', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValue(new Error('Tranca não encontrada'))
+      await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))
+    })
   })
 
   describe('destrancar', () => {
@@ -435,6 +489,60 @@ describe('trancaController', () => {
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
       await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, { ...tranca, bicicletaId: bicicleta.id, status: status.DISPONIVEL, localizacao: totem.localizacao }, 200)
+    })
+
+    it('should return ApiError with status 400 when body is missing a field', async () => {
+      const req = { params: { id: validId }, body: {} } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Campos obrigatórios não preenchidos'))
+    })
+
+    it('should return ApiError with status 400 when body has an invalid field', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: 'invalidId' } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
+    })
+
+    it('should return ApiError with status 400 when bicicleta status is not DISPONIVEL', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Bicicleta não disponível, verifique se está trancada ou se foi retirada da rede'))
+    })
+
+    it('should return ApiError with status 400 when tranca status is not EM_USO', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
+      await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Tranca não está trancada'))
+    })
+
+    it('should return ApiError with status 404 when bicicleta is not found', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockRejectedValue(new Error('Bicicleta não encontrada'))
+      await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.notFound('Bicicleta não encontrada'))
+    })
+
+    it('should return ApiError with status 404 when tranca is not found', async () => {
+      const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValue(new Error('Tranca não encontrada'))
+      await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))
     })
   })
 })
