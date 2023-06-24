@@ -8,7 +8,7 @@ const validId = 1
 const invalidId = 'not-a-number'
 const notFoundId = -1
 
-const expectResCalledWith = (res: Response, next: NextFunction, expectRes?: Totem | Totem[] | ApiError, expectSuccessStatus?: number): void => {
+const expectResCalledWith = (res: Response, next: NextFunction, expectRes?: any, expectSuccessStatus?: number): void => {
   if (expectSuccessStatus !== undefined) {
     expect(res.status).toHaveBeenCalledWith(expectSuccessStatus)
     if (expectRes !== undefined) expect(res.json).toHaveBeenCalledWith(expectRes)
@@ -167,6 +167,86 @@ describe('totemController', () => {
       const next = jest.fn() as any as NextFunction
       jest.spyOn(TotemService, 'deleteTotem').mockRejectedValueOnce(new Error('Totem não encontrado'))
       await (TotemController.deleteTotem(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.notFound('Totem não encontrado'))
+    })
+  })
+
+  describe('getAllTrancas', () => {
+    const trancaBody = {
+      id: validId,
+      modelo: 'Modelo X',
+      anoDeFabricacao: '2021',
+      numero: 1
+    }
+
+    it('should return trancas with status 200', async () => {
+      const req = { params: { id: validId } } as any as Request
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
+      const next = jest.fn() as any as NextFunction
+      const trancas = [{ ...trancaBody, id: validId }]
+      jest.spyOn(TotemService, 'getAllTrancas').mockResolvedValue(trancas)
+      await (TotemController.getAllTrancas(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, trancas, 200)
+    })
+
+    it('should return ApiError with status 400 when id is invalid', async () => {
+      const req = { params: { id: invalidId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      await (TotemController.getAllTrancas(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('ID inválido'))
+    })
+
+    it('should return ApiError with status 404 when id is not found', async () => {
+      const req = { params: { id: notFoundId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(TotemService, 'getAllTrancas').mockRejectedValueOnce(new Error('Totem não encontrado'))
+      await (TotemController.getAllTrancas(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.notFound('Totem não encontrado'))
+    })
+  })
+
+  describe('getAllBicicletas', () => {
+    const bicicletaBody = {
+      id: validId,
+      marca: 'Marca X',
+      modelo: 'Modelo X',
+      ano: '2021',
+      numero: 1,
+      status: 'Disponível'
+    }
+
+    it('should return bicicletas with status 200', async () => {
+      const req = { params: { id: validId } } as any as Request
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
+      const next = jest.fn() as any as NextFunction
+      const bicicletas = [{ ...bicicletaBody, id: validId }]
+      jest.spyOn(TotemService, 'getAllBicicletas').mockResolvedValue(bicicletas)
+      await (TotemController.getAllBicicletas(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, bicicletas, 200)
+    })
+
+    it('should return ApiError with status 400 when id is invalid', async () => {
+      const req = { params: { id: invalidId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      await (TotemController.getAllBicicletas(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('ID inválido'))
+    })
+
+    it('should return ApiError with status 404 when id is not found', async () => {
+      const req = { params: { id: notFoundId } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(TotemService, 'getAllBicicletas').mockRejectedValueOnce(new Error('Totem não encontrado'))
+      await (TotemController.getAllBicicletas(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Totem não encontrado'))
     })
   })
