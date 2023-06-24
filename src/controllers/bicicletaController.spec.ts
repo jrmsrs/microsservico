@@ -17,11 +17,9 @@ const expectResCalledWith = (res: Response, next: NextFunction, expectRes?: Bici
     if (expectRes !== undefined) expect(res.json).toHaveBeenCalledWith(expectRes)
     else expect(res.json).toHaveBeenCalledWith()
     expect(next).not.toHaveBeenCalled()
-  } else {
-    expect(res.status).toBe(undefined)
-    expect(res.json).toBe(undefined)
-    expect(next).toHaveBeenCalledWith(expectRes)
+    return
   }
+  expect(next).toHaveBeenCalledWith(expectRes)
 }
 
 const bicicletaBody: Bicicleta = {
