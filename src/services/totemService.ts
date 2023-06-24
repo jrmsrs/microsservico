@@ -1,5 +1,9 @@
 import { Totem } from '../repositories/totem'
+import { Bicicleta } from '../repositories/bicicleta'
+import { Tranca } from '../repositories/tranca'
 import * as TotemRepository from '../repositories/totemRepository'
+import * as BicicletaRepository from '../repositories/bicicletaRepository'
+import * as TrancaRepository from '../repositories/trancaRepository'
 
 export async function getAllTotems (): Promise<Totem[]> {
   return await TotemRepository.getTotens()
@@ -19,4 +23,22 @@ export async function updateTotem (id: number, updatedTotem: Totem): Promise<Tot
 
 export async function deleteTotem (id: number): Promise<void> {
   await TotemRepository.deleteTotem(id)
+}
+
+export async function getAllTrancas (id: number): Promise<Tranca[]> {
+  const trancas = await TrancaRepository.getTrancas()
+  return trancas.filter(tranca => tranca.totemId === id)
+}
+
+export async function getAllBicicletas (id: number): Promise<Bicicleta[]> {
+  const trancas = await TrancaRepository.getTrancas()
+  const bicicletas = await BicicletaRepository.getBicicletas()
+  const trancasDoTotem = trancas.filter(tranca => tranca.totemId === id)
+  const bicicletasDoTotem = [] as Bicicleta[]
+  trancasDoTotem.forEach(tranca => {
+    bicicletas.forEach(bicicleta => {
+      if (bicicleta.id === tranca.bicicletaId) bicicletasDoTotem.push(bicicleta)
+    })
+  })
+  return bicicletasDoTotem
 }

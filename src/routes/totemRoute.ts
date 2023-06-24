@@ -5,7 +5,9 @@ import {
   getTotemById,
   createTotem,
   updateTotem,
-  deleteTotem
+  deleteTotem,
+  getAllTrancas,
+  getAllBicicletas
 } from '../controllers/totemController'
 
 const router = express.Router()
@@ -99,5 +101,33 @@ router.put('/:id', updateTotem)
  *         description: Totem não encontrada
  */
 router.delete('/:id', deleteTotem)
+
+/**
+ * @swagger
+ * /totem/{id}/trancas:
+ *   get:
+ *     tags: [Totem]
+ *     summary: Retorna todas as trancas de um totem
+ *     parameters:
+ *      - $ref: '#/components/parameters/idTotem'
+ *     responses:
+ *       200:
+ *         description: Retorna um array com todos as bicicletas de um totem
+ */
+router.get('/:id/trancas', getAllTrancas)
+
+/**
+ * @swagger
+ * /totem/{id}/bicicletas:
+ *   get:
+ *     tags: [Totem]
+ *     summary: Retorna todas as bicicletas de um totem
+ *     parameters:
+ *      - $ref: '#/components/parameters/idTotem'
+ *     responses:
+ *       200:
+ *         description: Retorna um array com todos as bicicletas de um totem
+ */
+router.get('/:id/bicicletas', getAllBicicletas)
 
 export default router

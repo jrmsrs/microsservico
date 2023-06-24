@@ -74,3 +74,37 @@ export const deleteTotem = async (req: Request, res: Response, next: NextFunctio
     }
   }
 }
+
+// @ts-expect-error - TS1064
+export const getAllTrancas = async (req: Request, res: Response, next: NextFunction): void => {
+  const id = Number(req.params.id)
+  if (isNaN(id)) {
+    next(ApiError.badRequest('ID inválido'))
+    return
+  }
+  try {
+    const trancas = await TotemService.getAllTrancas(id)
+    res.status(200).json(trancas)
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Totem não encontrado') {
+      next(ApiError.notFound(error.message))
+    }
+  }
+}
+
+// @ts-expect-error - TS1064
+export const getAllBicicletas = async (req: Request, res: Response, next: NextFunction): void => {
+  const id = Number(req.params.id)
+  if (isNaN(id)) {
+    next(ApiError.badRequest('ID inválido'))
+    return
+  }
+  try {
+    const bicicletas = await TotemService.getAllBicicletas(id)
+    res.status(200).json(bicicletas)
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Totem não encontrado') {
+      next(ApiError.notFound(error.message))
+    }
+  }
+}
