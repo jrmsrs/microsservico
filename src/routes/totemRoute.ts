@@ -107,12 +107,16 @@ router.delete('/:id', deleteTotem)
  * /totem/{id}/trancas:
  *   get:
  *     tags: [Totem]
- *     summary: Retorna todas as trancas de um totem
+ *     summary: Listar trancas de um totem
  *     parameters:
  *      - $ref: '#/components/parameters/idTotem'
  *     responses:
  *       200:
  *         description: Retorna um array com todos as bicicletas de um totem
+ *       400:
+ *         description: Erro de validação
+ *       404:
+ *         description: Totem não encontrada
  */
 router.get('/:id/trancas', getAllTrancas)
 
@@ -121,12 +125,16 @@ router.get('/:id/trancas', getAllTrancas)
  * /totem/{id}/bicicletas:
  *   get:
  *     tags: [Totem]
- *     summary: Retorna todas as bicicletas de um totem
+ *     summary: Listar bicicletas de um totem
  *     parameters:
  *      - $ref: '#/components/parameters/idTotem'
  *     responses:
  *       200:
  *         description: Retorna um array com todos as bicicletas de um totem
+ *       400:
+ *         description: Erro de validação
+ *       404:
+ *         description: Totem não encontrada
  */
 router.get('/:id/bicicletas', getAllBicicletas)
 

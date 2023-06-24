@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import * as MainController from './mainController'
 
 describe('mainController', () => {
@@ -8,10 +8,10 @@ describe('mainController', () => {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
       redirect: jest.fn()
-    } as unknown as Response
+    } as any
     await (MainController.mainController(mockRequest, mockResponse) as unknown as Promise<void>)
     expect(mockResponse.status).toBeCalledTimes(0)
     expect(mockResponse.json).toBeCalledTimes(0)
-    expect(mockResponse.redirect).toHaveBeenCalledWith(303, '/docs')
+    expect(mockResponse.redirect).toBeCalledWith(303, '/docs')
   })
 })

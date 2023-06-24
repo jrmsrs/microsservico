@@ -115,8 +115,10 @@ router.delete('/:id', deleteBicicleta)
  *     responses:
  *       200:
  *         description: Dados cadastrados
- *       422:
- *         description: Dados Inválidos (ex status inválido da bicicleta ou tranca)
+ *       400:
+ *         description: Erro de validação
+ *       404:
+ *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
  */
 router.post('/integrarNaRede', integrarNaRede)
 
@@ -134,8 +136,10 @@ router.post('/integrarNaRede', integrarNaRede)
  *     responses:
  *       200:
  *         description: Dados cadastrados
- *       422:
- *         description: Dados Inválidos (ex status inválido da bicicleta ou tranca)
+ *       400:
+ *         description: Erro de validação
+ *       404:
+ *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
  */
 router.post('/retirarDaRede', retirarDaRede)
 
