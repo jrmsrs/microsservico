@@ -1,7 +1,14 @@
 import { makeError, errorHandler } from './error-handler'
-import { doMock } from '../utils/interceptor'
 import { ApiError } from './ApiError'
-// describe('Ignore', () => { it('should pass', () => { expect(true).toBe(true) }) })
+import { Request, Response, NextFunction } from 'express'
+
+export const doMock = (): { req: Request, res: Response, next: NextFunction } => {
+  const req = {} as any as Request
+  const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response
+  const next = jest.fn() as any as NextFunction
+  return { req, res, next }
+}
+
 describe('ErrorHandling errorHandler', () => {
   it('should return 500 INTERNAL', () => {
     const { req, res, next } = doMock()
