@@ -1,5 +1,7 @@
 import * as TotemService from './totemService'
 import * as TotemRepository from '../repositories/totemRepository'
+import * as TrancaRepository from '../repositories/trancaRepository'
+import * as BicicletaRepository from '../repositories/bicicletaRepository'
 import { Totem } from '../repositories/totem'
 
 describe('TotemService', () => {
@@ -123,6 +125,60 @@ describe('TotemService', () => {
       jest.spyOn(TotemRepository, 'deleteTotem').mockRejectedValue(new Error(errorMessage))
       await expect(TotemService.deleteTotem(id)).rejects.toThrow(errorMessage)
       expect(TotemRepository.deleteTotem).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('getAllTrancas', () => {
+    it('should return an array of trancas of the same totem', async () => {
+      const mockTrancas = [
+        {
+          id: 1,
+          numero: 1,
+          anoDeFabricacao: '2023',
+          modelo: 'Modelo 1',
+          totemId: 1
+        },
+        {
+          id: 2,
+          numero: 2,
+          anoDeFabricacao: '2023',
+          modelo: 'Modelo 2',
+          totemId: 1
+        }
+      ]
+      jest.spyOn(TrancaRepository, 'getTrancas').mockResolvedValue(mockTrancas)
+      const result = await TotemService.getAllTrancas(1)
+      expect(result).toEqual(mockTrancas)
+      const resultEmpty = await TotemService.getAllTrancas(2)
+      expect(resultEmpty).toEqual([])
+    })
+  })
+
+  describe('getAllBicicletas', () => {
+    it('should return an array of bicicletas of the same totem', async () => {
+      const mockBicicletas = [
+        {
+          id: 1,
+          numero: 1,
+          marca: 'Marca 1',
+          modelo: 'Modelo 1',
+          ano: '2023',
+          status: 'Disponível'
+        },
+        {
+          id: 2,
+          numero: 2,
+          marca: 'Marca 2',
+          modelo: 'Modelo 2',
+          ano: '2023',
+          status: 'Disponível'
+        }
+      ]
+      jest.spyOn(BicicletaRepository, 'getBicicletas').mockResolvedValue(mockBicicletas)
+      const result = await TotemService.getAllBicicletas(1)
+      expect(result).toEqual(mockBicicletas)
+      const resultEmpty = await TotemService.getAllBicicletas(2)
+      expect(resultEmpty).toEqual([])
     })
   })
 })
