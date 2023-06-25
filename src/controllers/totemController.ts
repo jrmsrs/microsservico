@@ -19,7 +19,7 @@ export const getTotemById = async (req: Request, res: Response, next: NextFuncti
     const totem = await TotemService.getTotemById(id)
     res.status(200).json(totem)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -52,7 +52,7 @@ export const updateTotem = async (req: Request, res: Response, next: NextFunctio
     const totem = await TotemService.updateTotem(id, { id, descricao, localizacao })
     res.status(200).json(totem)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -69,7 +69,7 @@ export const deleteTotem = async (req: Request, res: Response, next: NextFunctio
     await TotemService.deleteTotem(id)
     res.status(200).json()
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -86,7 +86,7 @@ export const getAllTrancas = async (req: Request, res: Response, next: NextFunct
     const trancas = await TotemService.getAllTrancas(id)
     res.status(200).json(trancas)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -103,7 +103,7 @@ export const getAllBicicletas = async (req: Request, res: Response, next: NextFu
     const bicicletas = await TotemService.getAllBicicletas(id)
     res.status(200).json(bicicletas)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Totem não encontrado') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }

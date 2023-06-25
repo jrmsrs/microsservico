@@ -21,7 +21,7 @@ export const getBicicletaById = async (req: Request, res: Response, next: NextFu
     const bicicleta = await BicicletaService.getBicicletaById(id)
     res.status(200).json(bicicleta)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -63,7 +63,7 @@ export const updateBicicleta = async (req: Request, res: Response, next: NextFun
     const bicicleta = await BicicletaService.updateBicicleta(id, { id, modelo, marca, ano, numero, status: oldBicicleta.status })
     res.status(200).json(bicicleta)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -80,7 +80,7 @@ export const deleteBicicleta = async (req: Request, res: Response, next: NextFun
     await BicicletaService.deleteBicicleta(id)
     res.status(200).json()
   } catch (error) {
-    if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -108,15 +108,13 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
       next(ApiError.badRequest('Bicicleta já integrada na rede ou aposentada'))
       return
     }
+    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: status.DISPONIVEL })
     await TrancaService.insertBicicleta(Number(trancaId), Number(bicicletaId))
+    // integration: POST Externo /enviarEmail - Send inclusion data to Externo API
     res.status(200).json(bicicleta)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
-      next(ApiError.notFound(error.message))
-      return
-    }
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }
@@ -148,15 +146,13 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
       next(ApiError.badRequest('Tranca não está conectada a bicicleta'))
       return
     }
+    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: statusAcaoReparador })
     await TrancaService.removeBicicleta(Number(trancaId))
+    // integration: POST Externo /enviarEmail - Send retiring data to Externo API
     res.status(200).json(bicicleta)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
-      next(ApiError.notFound(error.message))
-      return
-    }
-    if (error instanceof Error && error.message === 'Tranca não encontrada') {
+    if (error instanceof Error) {
       next(ApiError.notFound(error.message))
     }
   }

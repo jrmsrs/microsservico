@@ -199,9 +199,11 @@ export const trancar = async (req: Request, res: Response, next: NextFunction): 
       next(ApiError.badRequest('Tranca não disponível, verifique se está conectada a uma bicicleta ou se foi retirada da rede'))
       return
     }
+    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
     await BicicletaService.updateBicicleta(bicicletaId, { ...bicicleta, status: statusBicicleta.DISPONIVEL })
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: status.EM_USO, bicicletaId }) as TrancaResponse
     tranca.localizacao = await TotemService.getTotemById(Number(oldTranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
+    // integration: POST Externo /enviarEmail - Send inclusion data to Externo API
     res.status(200).json(tranca)
   } catch (error) {
     if (error instanceof Error) {
@@ -233,9 +235,11 @@ export const destrancar = async (req: Request, res: Response, next: NextFunction
       next(ApiError.badRequest('Tranca não está trancada'))
       return
     }
+    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
     await BicicletaService.updateBicicleta(bicicletaId, { ...bicicleta, status: statusBicicleta.EM_USO })
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: status.DISPONIVEL, bicicletaId: undefined }) as TrancaResponse
     tranca.localizacao = await TotemService.getTotemById(Number(oldTranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
+    // integration: POST Externo /enviarEmail - Send retiring data to Externo API
     res.status(200).json(tranca)
   } catch (error) {
     if (error instanceof Error) {
