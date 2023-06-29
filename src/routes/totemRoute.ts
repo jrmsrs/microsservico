@@ -1,14 +1,6 @@
 import express from 'express'
 
-import {
-  getTotem,
-  getTotemById,
-  createTotem,
-  updateTotem,
-  deleteTotem,
-  getAllTrancas,
-  getAllBicicletas
-} from '../controllers/totemController'
+import * as Controller from '../controllers/totemController'
 
 const router = express.Router()
 
@@ -22,7 +14,7 @@ const router = express.Router()
  *       200:
  *         description: Retorna um array com todos os totens cadastradas
  */
-router.get('/', getTotem)
+router.get('/', Controller.getTotem)
 
 /**
  * @swagger
@@ -40,7 +32,7 @@ router.get('/', getTotem)
  *       404:
  *         description: Totem não encontrada
  */
-router.get('/:id', getTotemById)
+router.get('/:id', Controller.getTotemById)
 
 /**
  * @swagger
@@ -59,7 +51,7 @@ router.get('/:id', getTotemById)
  *       422:
  *         description: Erro de validação
  */
-router.post('/', createTotem)
+router.post('/', Controller.createTotem)
 
 /**
  * @swagger
@@ -82,7 +74,7 @@ router.post('/', createTotem)
  *       404:
  *         description: Totem não encontrada
  */
-router.put('/:id', updateTotem)
+router.put('/:id', Controller.updateTotem)
 
 /**
  * @swagger
@@ -100,7 +92,7 @@ router.put('/:id', updateTotem)
  *       404:
  *         description: Totem não encontrada
  */
-router.delete('/:id', deleteTotem)
+router.delete('/:id', Controller.deleteTotem)
 
 /**
  * @swagger
@@ -118,7 +110,7 @@ router.delete('/:id', deleteTotem)
  *       404:
  *         description: Totem não encontrada
  */
-router.get('/:id/trancas', getAllTrancas)
+router.get('/:id/trancas', Controller.getAllTrancas)
 
 /**
  * @swagger
@@ -136,6 +128,6 @@ router.get('/:id/trancas', getAllTrancas)
  *       404:
  *         description: Totem não encontrada
  */
-router.get('/:id/bicicletas', getAllBicicletas)
+router.get('/:id/bicicletas', Controller.getAllBicicletas)
 
 export default router

@@ -9,8 +9,8 @@ import {
 const testExistentId = 3
 const testNonExistentId = -1
 
-describe('Model totemModel', () => {
-  describe('Model getTotens', () => {
+describe('Repository totemRepository', () => {
+  describe('Repository getTotens', () => {
     it('should get a list of totens', async () => {
       const testTotens: any[] = []
       for (let i = 0; i < 3; i++) {
@@ -24,7 +24,7 @@ describe('Model totemModel', () => {
     })
   })
 
-  describe('Model getTotemById', () => {
+  describe('Repository getTotemById', () => {
     it('should get the totem with the given ID', async () => {
       const testTotens = {
         id: testExistentId, localizacao: `Localização ${testExistentId}`, descricao: `Descrição ${testExistentId}`
@@ -44,7 +44,7 @@ describe('Model totemModel', () => {
     })
   })
 
-  describe('Model createTotem', () => {
+  describe('Repository createTotem', () => {
     it('should create a new totem', async () => {
       const testTotem = { localizacao: 'Localização X', descricao: 'Descrição X' }
       const totem = await createTotem(testTotem)
@@ -58,7 +58,7 @@ describe('Model totemModel', () => {
     })
   })
 
-  describe('Model updateTotem', () => {
+  describe('Repository updateTotem', () => {
     it('should update the totem with the given ID if found', async () => {
       const testTotem = { testExistentId, localizacao: 'Localização X', descricao: 'Descrição X' }
       const result = await updateTotem(testExistentId, testTotem)
@@ -77,7 +77,7 @@ describe('Model totemModel', () => {
     })
   })
 
-  describe('Model deleteTotem', () => {
+  describe('Repository deleteTotem', () => {
     it('should delete the totem with the given ID if found', async () => {
       const result = await deleteTotem(testExistentId)
       expect(result).toBeUndefined()
