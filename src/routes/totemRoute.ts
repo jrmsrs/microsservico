@@ -35,7 +35,7 @@ router.get('/', getTotem)
  *     responses:
  *       200:
  *         description: Retorna um totem pelo ID
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Totem não encontrada
@@ -56,7 +56,7 @@ router.get('/:id', getTotemById)
  *     responses:
  *       201:
  *         description: Retorna o totem criada
- *       400:
+ *       422:
  *         description: Erro de validação
  */
 router.post('/', createTotem)
@@ -77,7 +77,7 @@ router.post('/', createTotem)
  *     responses:
  *       200:
  *         description: Retorna o totem atualizada
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Totem não encontrada
@@ -95,7 +95,7 @@ router.put('/:id', updateTotem)
  *     responses:
  *       200:
  *         description: Dados removidos com sucesso
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Totem não encontrada
@@ -113,7 +113,7 @@ router.delete('/:id', deleteTotem)
  *     responses:
  *       200:
  *         description: Retorna um array com todos as bicicletas de um totem
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Totem não encontrada
@@ -131,7 +131,7 @@ router.get('/:id/trancas', getAllTrancas)
  *     responses:
  *       200:
  *         description: Retorna um array com todos as bicicletas de um totem
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Totem não encontrada

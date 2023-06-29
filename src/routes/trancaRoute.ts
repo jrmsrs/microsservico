@@ -37,7 +37,7 @@ router.get('/', getTranca)
  *     responses:
  *       200:
  *         description: Retorna uma tranca pelo ID
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca não encontrada
@@ -58,7 +58,7 @@ router.get('/:id', getTrancaById)
  *     responses:
  *       201:
  *         description: Retorna a tranca criada
- *       400:
+ *       422:
  *         description: Erro de validação
  */
 router.post('/', createTranca)
@@ -79,7 +79,7 @@ router.post('/', createTranca)
  *     responses:
  *       200:
  *         description: Retorna a tranca atualizada
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca não encontrada
@@ -97,7 +97,7 @@ router.put('/:id', updateTranca)
  *     responses:
  *       200:
  *         description: Dados removidos com sucesso
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca não encontrada
@@ -118,7 +118,7 @@ router.delete('/:id', deleteTranca)
  *     responses:
  *       200:
  *         description: Dados cadastrados
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
@@ -139,7 +139,7 @@ router.post('/integrarNaRede', integrarNaRede)
  *     responses:
  *       200:
  *         description: Dados cadastrados
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
@@ -162,7 +162,7 @@ router.post('/retirarDaRede', retirarDaRede)
  *     responses:
  *       200:
  *         description: Ação bem sucedida
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca/Bicicleta não encontrada
@@ -185,7 +185,7 @@ router.post('/:id/trancar', trancar)
  *     responses:
  *       200:
  *         description: Ação bem sucedida
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca/Bicicleta não encontrada

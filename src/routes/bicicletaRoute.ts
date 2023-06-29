@@ -34,7 +34,7 @@ router.get('/', getBicicleta)
  *     responses:
  *       200:
  *         description: Retorna uma bicicleta pelo ID
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Bicicleta não encontrada
@@ -55,7 +55,7 @@ router.get('/:id', getBicicletaById)
  *     responses:
  *       201:
  *         description: Retorna a bicicleta criada
- *       400:
+ *       422:
  *         description: Erro de validação
  */
 router.post('/', createBicicleta)
@@ -76,7 +76,7 @@ router.post('/', createBicicleta)
  *     responses:
  *       200:
  *         description: Retorna a bicicleta atualizada
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Bicicleta não encontrada
@@ -94,7 +94,7 @@ router.put('/:id', updateBicicleta)
  *     responses:
  *       200:
  *         description: Dados removidos com sucesso
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Bicicleta não encontrada
@@ -115,7 +115,7 @@ router.delete('/:id', deleteBicicleta)
  *     responses:
  *       200:
  *         description: Dados cadastrados
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
@@ -136,7 +136,7 @@ router.post('/integrarNaRede', integrarNaRede)
  *     responses:
  *       200:
  *         description: Dados cadastrados
- *       400:
+ *       422:
  *         description: Erro de validação
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)

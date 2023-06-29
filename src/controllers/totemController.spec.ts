@@ -57,7 +57,7 @@ describe('totemController', () => {
       expectResCalledWith(res, next, totem, 200)
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = { params: { id: invalidId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -89,7 +89,7 @@ describe('totemController', () => {
       expectResCalledWith(res, next, totem, 201)
     })
 
-    it('should return ApiError with status 400 when body doesn\'t have a mandatory field', async () => {
+    it('should return ApiError with status 422 when body doesn\'t have a mandatory field', async () => {
       const req = { body: { ...totemBody, localizacao: undefined } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -112,7 +112,7 @@ describe('totemController', () => {
       expectResCalledWith(res, next, totem, 200)
     })
 
-    it('should return ApiError with status 400 when body doesn\'t have a mandatory field', async () => {
+    it('should return ApiError with status 422 when body doesn\'t have a mandatory field', async () => {
       const req = { params: { id: validId }, body: { ...totemBody, localizacao: undefined } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -120,7 +120,7 @@ describe('totemController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Campos obrigatórios não preenchidos'))
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = { params: { id: invalidId }, body: { ...totemBody } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -151,7 +151,7 @@ describe('totemController', () => {
       expectResCalledWith(res, next, undefined, 200)
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = { params: { id: invalidId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -190,7 +190,7 @@ describe('totemController', () => {
       expectResCalledWith(res, next, trancas, 200)
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = { params: { id: invalidId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -231,7 +231,7 @@ describe('totemController', () => {
       expectResCalledWith(res, next, bicicletas, 200)
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = { params: { id: invalidId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction

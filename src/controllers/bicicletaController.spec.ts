@@ -63,7 +63,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, bicicleta, 200)
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = { params: { id: invalidId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -94,7 +94,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, { ...bicicletaBody, id: validId }, 201)
     })
 
-    it('should return ApiError with status 400 when body doesn\'t have a mandatory field', async () => {
+    it('should return ApiError with status 422 when body doesn\'t have a mandatory field', async () => {
       const req = { body: { ...bicicletaBody, modelo: undefined } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -102,7 +102,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Campos obrigatórios não preenchidos'))
     })
 
-    it('should return ApiError with status 400 when body has an invalid field', async () => {
+    it('should return ApiError with status 422 when body has an invalid field', async () => {
       const req = { body: { ...bicicletaBody, numero: invalidNumber } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -127,7 +127,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, bicicleta, 200)
     })
 
-    it('should return ApiError with status 400 when body doesn\'t have a mandatory field', async () => {
+    it('should return ApiError with status 422 when body doesn\'t have a mandatory field', async () => {
       const req = {
         params: { id: validId }, body: { ...bicicletaBody, modelo: undefined }
       } as any as Request
@@ -137,7 +137,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Campos obrigatórios não preenchidos'))
     })
 
-    it('should return ApiError with status 400 when body has an invalid field', async () => {
+    it('should return ApiError with status 422 when body has an invalid field', async () => {
       const req = {
         params: { id: validId }, body: { ...bicicletaBody, numero: invalidNumber }
       } as any as Request
@@ -147,7 +147,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = {
         params: { id: invalidId }, body: { ...bicicletaBody }
       } as any as Request
@@ -182,7 +182,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, undefined, 200)
     })
 
-    it('should return ApiError with status 400 when id is invalid', async () => {
+    it('should return ApiError with status 422 when id is invalid', async () => {
       const req = { params: { id: invalidId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -237,7 +237,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, { ...bicicleta, status: status.DISPONIVEL }, 200)
     })
 
-    it('should return ApiError with status 400 when body is missing a field', async () => {
+    it('should return ApiError with status 422 when body is missing a field', async () => {
       const req = { body: { ...integrarNaRedeBody, bicicletaId: undefined } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -245,7 +245,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Campos obrigatórios não preenchidos'))
     })
 
-    it('should return ApiError with status 400 when body has an invalid field', async () => {
+    it('should return ApiError with status 422 when body has an invalid field', async () => {
       const req = { body: { ...integrarNaRedeBody, bicicletaId: invalidId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -313,7 +313,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, { ...bicicleta, status: status.EM_REPARO }, 200)
     })
 
-    it('should return ApiError with status 400 when body is missing a field', async () => {
+    it('should return ApiError with status 422 when body is missing a field', async () => {
       const req = { body: { ...retirarDaRedeBody, trancaId: undefined } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -321,7 +321,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Campos obrigatórios não preenchidos'))
     })
 
-    it('should return ApiError with status 400 when body has an invalid field', async () => {
+    it('should return ApiError with status 422 when body has an invalid field', async () => {
       const req = { body: { ...retirarDaRedeBody, bicicletaId: 'invalidId' } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -329,7 +329,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
     })
 
-    it('should return ApiError with status 400 when statusAcaoReparador is invalid', async () => {
+    it('should return ApiError with status 422 when statusAcaoReparador is invalid', async () => {
       const req = { body: { ...retirarDaRedeBody, statusAcaoReparador: 'invalidStatus' } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -337,7 +337,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Status inválido, deve ser "em reparo" ou "aposentada"'))
     })
 
-    it('should return ApiError with status 400 when tranca status is not EM_USO', async () => {
+    it('should return ApiError with status 422 when tranca status is not EM_USO', async () => {
       const req = { body: { ...retirarDaRedeBody, statusAcaoReparador: status.EM_REPARO } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
@@ -346,7 +346,7 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Tranca indisponível'))
     })
 
-    it('should return ApiError with status 400 when bicicleta and tranca are not connected', async () => {
+    it('should return ApiError with status 422 when bicicleta and tranca are not connected', async () => {
       const req = { body: { ...retirarDaRedeBody } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction

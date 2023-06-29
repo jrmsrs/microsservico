@@ -4,7 +4,7 @@ export class ApiError {
   constructor (public code: number, public message?: string) {}
 
   static badRequest (msg?: string): ApiError {
-    return new ApiError(400, msg ?? 'Bad request')
+    return new ApiError(422, msg ?? 'Bad request')
   }
 
   static notFound (msg?: string): ApiError {
