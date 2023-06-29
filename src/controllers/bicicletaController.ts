@@ -3,6 +3,23 @@ import * as BicicletaService from '../services/bicicletaService'
 import * as TrancaService from '../services/trancaService'
 import { ApiError } from '../error/ApiError'
 import { status } from '../enums/statusBicicletaEnum'
+import { Aluguel, Externo } from '../http'
+
+export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosBicicleta: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
+  return {
+    email: dadosFuncionario.email,
+    assunto: `Bicicleta ${assunto} na rede`,
+    mensagem: `\
+<p>Olá, ${dadosFuncionario.nome as string}!</p>
+<p>A bicicleta ${dadosBicicleta.marca as string} - ${dadosBicicleta.modelo as string} de número ${dadosBicicleta.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!</p>
+<p>Foi utilizada a tranca de modelo ${dadosTranca.modelo as string} e número ${dadosTranca.numero as number}, localizada no Totem ID-${dadosTranca.totemId as string} para realizar a operação.</p>
+<br />
+<p>Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
+<br />
+<p>Atenciosamente,</p>
+<p>Equipe ---</p>`
+  }
+}
 
 // @ts-expect-error - TS1064
 export const getBicicleta = async (req: Request, res: Response, next: NextFunction): void => {
@@ -112,10 +129,10 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
       next(ApiError.badRequest('Bicicleta já integrada na rede ou aposentada'))
       return
     }
-    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
+    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: status.DISPONIVEL })
     await TrancaService.insertBicicleta(Number(trancaId), Number(bicicletaId))
-    // integration: POST Externo /enviarEmail - Send inclusion data to Externo API
+    await Externo.post('enviarEmail', criaEmail('integrada', status.DISPONIVEL, funcionario, bicicleta, tranca))
     res.status(200).json(bicicleta)
   } catch (error) {
     if (error instanceof Error) {
@@ -146,10 +163,10 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
       next(ApiError.badRequest('Bicicleta não está conectada a tranca informada'))
       return
     }
-    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
+    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: statusAcaoReparador })
     await TrancaService.removeBicicleta(Number(trancaId))
-    // integration: POST Externo /enviarEmail - Send retiring data to Externo API
+    await Externo.post('enviarEmail', criaEmail('retirada', statusAcaoReparador, funcionario, bicicleta, tranca))
     res.status(200).json(bicicleta)
   } catch (error) {
     if (error instanceof Error) {

@@ -7,6 +7,9 @@ import { status } from '../enums/statusTrancaEnum'
 import { status as statusBicicleta } from '../enums/statusBicicletaEnum'
 import { ApiError } from '../error/ApiError'
 import { Tranca } from '../models/trancaModel'
+import { Aluguel, Externo } from '../http'
+
+jest.mock('../http')
 
 const validId = 1
 const invalidNumber = 'not-a-number'
@@ -260,6 +263,8 @@ describe('trancaController', () => {
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.NOVA })
       jest.spyOn(TrancaService, 'updateTranca').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ id: 1, email: 'jose@email.com', nome: 'Jose' })
+      jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
       await (TrancaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, { ...tranca, status: status.DISPONIVEL, localizacao: totem.localizacao }, 200)
     })
@@ -328,6 +333,8 @@ describe('trancaController', () => {
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
       jest.spyOn(TrancaService, 'updateTranca').mockResolvedValue({ ...tranca, status: status.EM_REPARO })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ id: 1, email: 'jose@email.com', nome: 'Jose' })
+      jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
       await (TrancaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, { ...tranca, status: status.EM_REPARO, localizacao: 'Não instalada' }, 200)
     })

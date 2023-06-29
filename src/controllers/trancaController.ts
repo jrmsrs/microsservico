@@ -6,9 +6,26 @@ import { ApiError } from '../error/ApiError'
 import { status } from '../enums/statusTrancaEnum'
 import { status as statusBicicleta } from '../enums/statusBicicletaEnum'
 import { Tranca } from '../models/trancaModel'
+import { Aluguel, Externo } from '../http'
 
 interface TrancaResponse extends Tranca {
   localizacao?: string
+}
+
+export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
+  return {
+    email: dadosFuncionario.email,
+    assunto: `Tranca ${assunto} na rede`,
+    mensagem: `\
+<p>Olá, ${dadosFuncionario.nome as string}!</p>
+<p>A tranca ${dadosTranca.modelo as string} de número ${dadosTranca.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!</p>
+<p>Foi utilizado o Totem ID-${dadosTranca.totemId as string}, localizado em ${dadosTranca.localizacao as string} para realizar a operação.</p>
+<br />
+<p>Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
+<br />
+<p>Atenciosamente,</p>
+<p>Equipe ---</p>`
+  }
 }
 
 // @ts-expect-error - TS1064
@@ -129,8 +146,10 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
       next(ApiError.badRequest('Tranca já integrada na rede ou aposentada'))
       return
     }
+    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: status.DISPONIVEL, totemId }) as TrancaResponse
     tranca.localizacao = await TotemService.getTotemById(totemId).then((totem) => totem.localizacao).catch(() => 'Não instalada')
+    await Externo.post('enviarEmail', criaEmail('integrada', status.DISPONIVEL, funcionario, tranca))
     res.status(200).json(tranca)
   } catch (error) {
     if (error instanceof Error) {
@@ -165,9 +184,10 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
       next(ApiError.badRequest('Tranca não está instalada no totem informado'))
       return
     }
-    // verifica se funcionarioId é válido
+    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: statusAcaoReparador, totemId: undefined }) as TrancaResponse
     tranca.localizacao = 'Não instalada'
+    await Externo.post('enviarEmail', criaEmail('integrada', status.DISPONIVEL, funcionario, tranca))
     res.status(200).json(tranca)
   } catch (error) {
     if (error instanceof Error) {
@@ -199,11 +219,9 @@ export const trancar = async (req: Request, res: Response, next: NextFunction): 
       next(ApiError.badRequest('Tranca não disponível, verifique se está conectada a uma bicicleta ou se foi retirada da rede'))
       return
     }
-    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
     await BicicletaService.updateBicicleta(bicicletaId, { ...bicicleta, status: statusBicicleta.DISPONIVEL })
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: status.EM_USO, bicicletaId }) as TrancaResponse
     tranca.localizacao = await TotemService.getTotemById(Number(oldTranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
-    // integration: POST Externo /enviarEmail - Send inclusion data to Externo API
     res.status(200).json(tranca)
   } catch (error) {
     if (error instanceof Error) {
@@ -235,11 +253,9 @@ export const destrancar = async (req: Request, res: Response, next: NextFunction
       next(ApiError.badRequest('Tranca não está trancada'))
       return
     }
-    // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
     await BicicletaService.updateBicicleta(bicicletaId, { ...bicicleta, status: statusBicicleta.EM_USO })
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: status.DISPONIVEL, bicicletaId: undefined }) as TrancaResponse
     tranca.localizacao = await TotemService.getTotemById(Number(oldTranca.totemId)).then((totem) => totem.localizacao).catch(() => 'Não instalada')
-    // integration: POST Externo /enviarEmail - Send retiring data to Externo API
     res.status(200).json(tranca)
   } catch (error) {
     if (error instanceof Error) {

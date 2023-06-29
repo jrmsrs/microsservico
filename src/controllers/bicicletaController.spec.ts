@@ -5,6 +5,9 @@ import * as TrancaService from '../services/trancaService'
 import { status } from '../enums/statusBicicletaEnum'
 import { ApiError } from '../error/ApiError'
 import { Bicicleta } from '../models/bicicletaModel'
+import { Aluguel, Externo } from '../http'
+
+jest.mock('../http')
 
 const validId = 1
 const invalidNumber = 'not-a-number'
@@ -233,6 +236,8 @@ describe('bicicletaController', () => {
       jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.NOVA })
       jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
       jest.spyOn(TrancaService, 'insertBicicleta').mockResolvedValue({ ...tranca, status: status.EM_USO })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ id: 1, email: 'jose@email.com', nome: 'Jose' })
+      jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
       await (BicicletaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, { ...bicicleta, status: status.DISPONIVEL }, 200)
     })
@@ -309,6 +314,8 @@ describe('bicicletaController', () => {
       jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
       jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.EM_REPARO })
       jest.spyOn(TrancaService, 'removeBicicleta').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ id: 1, email: 'jose@email.com', nome: 'Jose' })
+      jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
       await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, { ...bicicleta, status: status.EM_REPARO }, 200)
     })
