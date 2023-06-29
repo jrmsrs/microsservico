@@ -10,8 +10,8 @@ gerencia bicicletas, cadeados e totens
 
 ## integrações 🌐
 
-- [microserviço aluguel](): gerenciamento de funcionários, cliclistas e aluguéis
-- [microserviço externo](): comunicação com sistemas externos de envio de e-mail e cobranças
+- [microserviço aluguel](https://github.com/kevincrys/microsservicoAluguel): gerenciamento de funcionários, cliclistas e aluguéis
+- [microserviço externo](https://github.com/Mad-Clap/Externo_PM): gerenciamento de cobranças, comunicação com sistemas externos de envio de e-mail e cartao de credito
 
 ## setup do ambiente 🛠
 
