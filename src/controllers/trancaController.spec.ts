@@ -512,7 +512,7 @@ describe('trancaController', () => {
       const next = jest.fn() as any as NextFunction
       jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.EM_USO })
       await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, ApiError.badRequest('Bicicleta não disponível, verifique se está trancada ou se foi retirada da rede'))
+      expectResCalledWith(res, next, ApiError.badRequest('Bicicleta não disponível, verifique está realmente trancada ou com reparo solicitado'))
     })
 
     it('should return ApiError with status 422 when tranca status is not EM_USO', async () => {
@@ -542,6 +542,25 @@ describe('trancaController', () => {
       jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValue(new Error('Tranca não encontrada'))
       await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))
+    })
+  })
+
+  describe('setStatus', () => {
+    it('should return 422 with message', async () => {
+      const req = { params: { id: validId, statusAcao: 'any-status' } } as any as Request
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as any as Response
+      const next = jest.fn() as any as NextFunction
+      await (TrancaController.setStatus(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest(
+        'Altere o status da tranca pelos endpoints ' +
+        "tranca/{trancaId}/trancar (ficará -> 'ocupada' com uma bicicleta); " +
+        "/tranca/{tranca}/destrancar (ficará -> 'livre'); " +
+        "/bicicleta/integrarNaRede (ficará -> 'livre' em um totem); " +
+        "/bicicleta/retirarDaRede (ficará -> 'aposentada' ou 'em reparo')"
+      ))
     })
   })
 })

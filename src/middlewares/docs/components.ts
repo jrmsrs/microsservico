@@ -221,6 +221,17 @@ export const components = {
       },
       description: 'status da bicicleta',
       required: true
+    },
+    trancaStatus: {
+      in: 'path',
+      name: 'statusAcao',
+      schema: {
+        type: 'string',
+        example: statusTranca.APOSENTADA,
+        default: statusTranca.APOSENTADA
+      },
+      description: 'status da tranca',
+      required: true
     }
   }
 }

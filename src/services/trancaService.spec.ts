@@ -68,6 +68,31 @@ describe('TrancaService', () => {
     })
   })
 
+  describe('getTrancaByBicicletaId', () => {
+    it('should return the tranca with the given bicicleta ID', async () => {
+      const mockTranca: Tranca = {
+        id: 1,
+        anoDeFabricacao: '2020',
+        modelo: 'Modelo 1',
+        numero: 1,
+        bicicletaId: 1,
+        status: status.EM_USO,
+        totemId: 1
+      }
+      jest.spyOn(TrancaRepository, 'getTrancaByBicicletaId').mockResolvedValue(mockTranca)
+      const result = await TrancaService.getTrancaByBicicletaId(Number(mockTranca.bicicletaId))
+      expect(result).toEqual(mockTranca)
+      expect(TrancaRepository.getTrancaByBicicletaId).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return null when repository returns null', async () => {
+      jest.spyOn(TrancaRepository, 'getTrancaByBicicletaId').mockResolvedValue(null)
+      const result = await TrancaService.getTrancaByBicicletaId(1)
+      expect(result).toBeNull()
+      expect(TrancaRepository.getTrancaByBicicletaId).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('createTranca', () => {
     it('should create a new tranca', async () => {
       const mockTranca: Tranca = {

@@ -10,6 +10,10 @@ export async function getTrancaById (id: number): Promise<Tranca> {
   return await TrancaRepository.getTrancaById(id)
 }
 
+export async function getTrancaByBicicletaId (id: number): Promise<Tranca | null> {
+  return await TrancaRepository.getTrancaByBicicletaId(id)
+}
+
 export async function createTranca (tranca: Tranca): Promise<Tranca> {
   return await TrancaRepository.createTranca(tranca)
 }

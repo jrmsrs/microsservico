@@ -1,16 +1,6 @@
 import express from 'express'
 
-import {
-  getTranca,
-  getTrancaById,
-  createTranca,
-  updateTranca,
-  deleteTranca,
-  integrarNaRede,
-  retirarDaRede,
-  trancar,
-  destrancar
-} from '../controllers/trancaController'
+import * as controller from '../controllers/trancaController'
 
 const router = express.Router()
 
@@ -24,7 +14,7 @@ const router = express.Router()
  *       200:
  *         description: Retorna um array com todos as trancas cadastradas
  */
-router.get('/', getTranca)
+router.get('/', controller.getTranca)
 
 /**
  * @swagger
@@ -42,7 +32,7 @@ router.get('/', getTranca)
  *       404:
  *         description: Tranca não encontrada
  */
-router.get('/:id', getTrancaById)
+router.get('/:id', controller.getTrancaById)
 
 /**
  * @swagger
@@ -61,7 +51,7 @@ router.get('/:id', getTrancaById)
  *       422:
  *         description: Erro de validação
  */
-router.post('/', createTranca)
+router.post('/', controller.createTranca)
 
 /**
  * @swagger
@@ -84,7 +74,7 @@ router.post('/', createTranca)
  *       404:
  *         description: Tranca não encontrada
  */
-router.put('/:id', updateTranca)
+router.put('/:id', controller.updateTranca)
 
 /**
  * @swagger
@@ -102,7 +92,7 @@ router.put('/:id', updateTranca)
  *       404:
  *         description: Tranca não encontrada
  */
-router.delete('/:id', deleteTranca)
+router.delete('/:id', controller.deleteTranca)
 
 /**
  * @swagger
@@ -123,7 +113,7 @@ router.delete('/:id', deleteTranca)
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
  */
-router.post('/integrarNaRede', integrarNaRede)
+router.post('/integrarNaRede', controller.integrarNaRede)
 
 /**
  * @swagger
@@ -144,7 +134,7 @@ router.post('/integrarNaRede', integrarNaRede)
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
  */
-router.post('/retirarDaRede', retirarDaRede)
+router.post('/retirarDaRede', controller.retirarDaRede)
 
 /**
  * @swagger
@@ -167,7 +157,7 @@ router.post('/retirarDaRede', retirarDaRede)
  *       404:
  *         description: Tranca/Bicicleta não encontrada
  */
-router.post('/:id/trancar', trancar)
+router.post('/:id/trancar', controller.trancar)
 
 /**
  * @swagger
@@ -190,6 +180,21 @@ router.post('/:id/trancar', trancar)
  *       404:
  *         description: Tranca/Bicicleta não encontrada
  */
-router.post('/:id/destrancar', destrancar)
+router.post('/:id/destrancar', controller.destrancar)
+
+/**
+ * @swagger
+ * /tranca/{id}/status/{acao}:
+ *   post:
+ *     tags: [Tranca]
+ *     summary: Alterar status da tranca.
+ *     parameters:
+ *      - $ref: '#/components/parameters/idTranca'
+ *      - $ref: '#/components/parameters/trancaStatus'
+ *     responses:
+ *       422:
+ *         description: Erro de validação
+ */
+router.post('/:id/status/:status', controller.setStatus)
 
 export default router

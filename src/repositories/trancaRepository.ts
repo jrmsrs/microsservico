@@ -78,6 +78,12 @@ export async function getTrancaById (id: number): Promise<Tranca> {
   throw new Error('Tranca não encontrada')
 }
 
+export async function getTrancaByBicicletaId (id: number): Promise<Tranca | null> {
+  const tranca = trancas.find((tranca) => tranca.bicicletaId === id)
+  if (tranca !== undefined) return tranca
+  return null
+}
+
 export async function createTranca (tranca: Tranca, array = trancas): Promise<Tranca> {
   // get last id and add 1, if undefined, set id to 1
   tranca.id = (array[array.length - 1]?.id ?? 0) + 1

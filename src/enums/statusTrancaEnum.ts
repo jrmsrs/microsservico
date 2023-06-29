@@ -1,8 +1,7 @@
 export enum status {
-  DISPONIVEL = 'disponível',
-  EM_USO = 'em uso',
+  DISPONIVEL = 'livre',
+  EM_USO = 'ocupada',
   NOVA = 'nova',
   APOSENTADA = 'aposentada',
-  REPARO_SOLICITADO = 'reparo solicitado',
   EM_REPARO = 'em reparo'
 }

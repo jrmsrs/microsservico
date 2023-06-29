@@ -227,7 +227,7 @@ export const destrancar = async (req: Request, res: Response, next: NextFunction
   try {
     const bicicleta = await BicicletaService.getBicicletaById(bicicletaId)
     if (bicicleta.status !== statusBicicleta.DISPONIVEL) {
-      next(ApiError.badRequest('Bicicleta não disponível, verifique se está trancada ou se foi retirada da rede'))
+      next(ApiError.badRequest('Bicicleta não disponível, verifique está realmente trancada ou com reparo solicitado'))
       return
     }
     const oldTranca = await TrancaService.getTrancaById(trancaId)
@@ -246,4 +246,15 @@ export const destrancar = async (req: Request, res: Response, next: NextFunction
       next(ApiError.notFound(error.message))
     }
   }
+}
+
+// @ts-expect-error - TS1064
+export const setStatus = async (req: Request, res: Response, next: NextFunction): void => {
+  next(ApiError.badRequest(
+    'Altere o status da tranca pelos endpoints ' +
+    "tranca/{trancaId}/trancar (ficará -> 'ocupada' com uma bicicleta); " +
+    "/tranca/{tranca}/destrancar (ficará -> 'livre'); " +
+    "/bicicleta/integrarNaRede (ficará -> 'livre' em um totem); " +
+    "/bicicleta/retirarDaRede (ficará -> 'aposentada' ou 'em reparo')"
+  ))
 }
