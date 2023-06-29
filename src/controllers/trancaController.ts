@@ -5,7 +5,7 @@ import * as BicicletaService from '../services/bicicletaService'
 import { ApiError } from '../error/ApiError'
 import { status } from '../enums/statusTrancaEnum'
 import { status as statusBicicleta } from '../enums/statusBicicletaEnum'
-import { Tranca } from 'src/repositories/tranca'
+import { Tranca } from '../models/trancaModel'
 
 interface TrancaResponse extends Tranca {
   localizacao?: string

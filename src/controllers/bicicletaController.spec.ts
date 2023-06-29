@@ -4,7 +4,7 @@ import * as BicicletaService from '../services/bicicletaService'
 import * as TrancaService from '../services/trancaService'
 import { status } from '../enums/statusBicicletaEnum'
 import { ApiError } from '../error/ApiError'
-import { Bicicleta } from 'src/repositories/bicicleta'
+import { Bicicleta } from '../models/bicicletaModel'
 
 const validId = 1
 const invalidNumber = 'not-a-number'

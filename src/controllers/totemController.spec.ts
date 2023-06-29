@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import * as TotemController from './totemController'
 import * as TotemService from '../services/totemService'
 import { ApiError } from '../error/ApiError'
-import { Totem } from 'src/repositories/totem'
+import { Totem } from '../models/totemModel'
 
 const validId = 1
 const invalidId = 'not-a-number'

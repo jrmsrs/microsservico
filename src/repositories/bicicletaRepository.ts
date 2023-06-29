@@ -1,4 +1,4 @@
-import { Bicicleta } from './bicicleta'
+import { Bicicleta } from '../models/bicicletaModel'
 import { status } from '../enums/statusBicicletaEnum'
 
 export let bicicletas: Bicicleta[] = [

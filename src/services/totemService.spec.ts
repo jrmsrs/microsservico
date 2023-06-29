@@ -2,11 +2,12 @@ import * as TotemService from './totemService'
 import * as TotemRepository from '../repositories/totemRepository'
 import * as TrancaRepository from '../repositories/trancaRepository'
 import * as BicicletaRepository from '../repositories/bicicletaRepository'
-import { Totem } from '../repositories/totem'
+import { Totem } from '../models/totemModel'
 
 describe('TotemService', () => {
   afterEach(() => {
-    jest.restoreAllMocks()
+    jest.resetModules()
+    jest.resetAllMocks()
   })
 
   describe('getAllTotems', () => {

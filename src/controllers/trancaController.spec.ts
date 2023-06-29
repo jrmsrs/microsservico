@@ -4,8 +4,9 @@ import * as TrancaController from './trancaController'
 import * as TrancaService from '../services/trancaService'
 import * as BicicletaService from '../services/bicicletaService'
 import { status } from '../enums/statusTrancaEnum'
+import { status as statusBicicleta } from '../enums/statusBicicletaEnum'
 import { ApiError } from '../error/ApiError'
-import { Tranca } from 'src/repositories/tranca'
+import { Tranca } from '../models/trancaModel'
 
 const validId = 1
 const invalidNumber = 'not-a-number'
@@ -408,9 +409,9 @@ describe('trancaController', () => {
         json: jest.fn()
       } as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.EM_USO })
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
-      jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: statusBicicleta.DISPONIVEL })
       jest.spyOn(TrancaService, 'updateTranca').mockResolvedValue({ ...tranca, bicicletaId: bicicleta.id, status: status.EM_USO })
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
       await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
@@ -437,7 +438,7 @@ describe('trancaController', () => {
       const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.DISPONIVEL })
       await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.badRequest('Bicicleta já está trancada ou não está integrada na rede'))
     })
@@ -446,7 +447,7 @@ describe('trancaController', () => {
       const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.EM_USO })
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.EM_USO })
       await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.badRequest('Tranca não disponível, verifique se está conectada a uma bicicleta ou se foi retirada da rede'))
@@ -465,7 +466,7 @@ describe('trancaController', () => {
       const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.EM_USO })
       jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValue(new Error('Tranca não encontrada'))
       await (TrancaController.trancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))
@@ -480,9 +481,9 @@ describe('trancaController', () => {
         json: jest.fn()
       } as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.DISPONIVEL })
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.EM_USO, bicicletaId: bicicleta.id })
-      jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: statusBicicleta.EM_USO })
       jest.spyOn(TrancaService, 'updateTranca').mockResolvedValue({ ...tranca, bicicletaId: bicicleta.id, status: status.DISPONIVEL })
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
       await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
@@ -509,7 +510,7 @@ describe('trancaController', () => {
       const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.EM_USO })
       await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.badRequest('Bicicleta não disponível, verifique se está trancada ou se foi retirada da rede'))
     })
@@ -518,7 +519,7 @@ describe('trancaController', () => {
       const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.DISPONIVEL })
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
       await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.badRequest('Tranca não está trancada'))
@@ -537,7 +538,7 @@ describe('trancaController', () => {
       const req = { params: { id: validId }, body: { bicicletaId: validId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: statusBicicleta.DISPONIVEL })
       jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValue(new Error('Tranca não encontrada'))
       await (TrancaController.destrancar(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))

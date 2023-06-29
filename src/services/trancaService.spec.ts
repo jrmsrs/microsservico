@@ -1,6 +1,6 @@
 import * as TrancaService from './trancaService'
 import * as TrancaRepository from '../repositories/trancaRepository'
-import { Tranca } from '../repositories/tranca'
+import { Tranca } from '../models/trancaModel'
 import { status } from '../enums/statusTrancaEnum'
 
 describe('TrancaService', () => {
@@ -156,13 +156,12 @@ describe('TrancaService', () => {
         anoDeFabricacao: '2021',
         modelo: 'Modelo X',
         numero: 1,
-        bicicletaId: 1,
-        status: status.EM_USO,
         totemId: 1
       }
-      jest.spyOn(TrancaRepository, 'updateTranca').mockResolvedValue(mockTranca)
+      jest.spyOn(TrancaRepository, 'getTrancaById').mockResolvedValue(mockTranca)
+      jest.spyOn(TrancaRepository, 'updateTranca').mockResolvedValue({ ...mockTranca, bicicletaId: 1, status: status.EM_USO })
       const result = await TrancaService.insertBicicleta(Number(mockTranca.id), 1)
-      expect(result).toEqual(mockTranca)
+      expect(result).toEqual({ ...mockTranca, bicicletaId: 1, status: status.EM_USO })
       expect(TrancaRepository.updateTranca).toHaveBeenCalledTimes(1)
     })
     it('should throw an error when repository throws an error', async () => {
@@ -176,6 +175,7 @@ describe('TrancaService', () => {
         status: status.EM_USO,
         totemId: 1
       }
+      jest.spyOn(TrancaRepository, 'getTrancaById').mockResolvedValue(mockTranca)
       jest.spyOn(TrancaRepository, 'updateTranca').mockRejectedValue(new Error(errorMessage))
       await expect(TrancaService.insertBicicleta(Number(mockTranca.id), 1)).rejects.toThrow(errorMessage)
       expect(TrancaRepository.updateTranca).toHaveBeenCalledTimes(1)
@@ -192,6 +192,7 @@ describe('TrancaService', () => {
         status: status.DISPONIVEL,
         totemId: 1
       }
+      jest.spyOn(TrancaRepository, 'getTrancaById').mockResolvedValue({ ...mockTranca, bicicletaId: 1, status: status.EM_USO })
       jest.spyOn(TrancaRepository, 'updateTranca').mockResolvedValue(mockTranca)
       const result = await TrancaService.removeBicicleta(Number(mockTranca.id))
       expect(result).toEqual(mockTranca)
@@ -207,6 +208,7 @@ describe('TrancaService', () => {
         status: status.DISPONIVEL,
         totemId: 1
       }
+      jest.spyOn(TrancaRepository, 'getTrancaById').mockResolvedValue(mockTranca)
       jest.spyOn(TrancaRepository, 'updateTranca').mockRejectedValue(new Error(errorMessage))
       await expect(TrancaService.removeBicicleta(Number(mockTranca.id))).rejects.toThrow(errorMessage)
       expect(TrancaRepository.updateTranca).toHaveBeenCalledTimes(1)

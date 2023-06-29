@@ -1,4 +1,4 @@
-import { Tranca } from '../repositories/tranca'
+import { Tranca } from '../models/trancaModel'
 import * as TrancaRepository from '../repositories/trancaRepository'
 import { status } from '../enums/statusTrancaEnum'
 

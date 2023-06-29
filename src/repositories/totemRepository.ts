@@ -1,4 +1,4 @@
-import { Totem } from './totem'
+import { Totem } from '../models/totemModel'
 
 let totens: Totem[] = [
   {

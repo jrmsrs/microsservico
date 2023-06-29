@@ -1,6 +1,6 @@
 import * as BicicletaService from './bicicletaService'
 import * as BicicletaRepository from '../repositories/bicicletaRepository'
-import { Bicicleta } from '../repositories/bicicleta'
+import { Bicicleta } from '../models/bicicletaModel'
 import { status } from '../enums/statusBicicletaEnum'
 
 describe('BicicletaService', () => {

@@ -1,4 +1,4 @@
-import { Bicicleta } from '../repositories/bicicleta'
+import { Bicicleta } from '../models/bicicletaModel'
 import * as BicicletaRepository from '../repositories/bicicletaRepository'
 
 export async function getAllBicicletas (): Promise<Bicicleta[]> {

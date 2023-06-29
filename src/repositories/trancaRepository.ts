@@ -1,4 +1,4 @@
-import { Tranca } from './tranca'
+import { Tranca } from '../models/trancaModel'
 import { status } from '../enums/statusTrancaEnum'
 
 let trancas: Tranca[] = [
