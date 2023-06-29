@@ -78,6 +78,10 @@ export const deleteBicicleta = async (req: Request, res: Response, next: NextFun
   }
   try {
     await BicicletaService.deleteBicicleta(id)
+    const tranca = await TrancaService.getTrancaByBicicletaId(id)
+    if (tranca !== null) {
+      await TrancaService.removeBicicleta(tranca.id as number)
+    }
     res.status(200).json()
   } catch (error) {
     if (error instanceof Error) {
@@ -137,19 +141,34 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
   }
   try {
     const tranca = await TrancaService.getTrancaById(Number(trancaId))
-    if (tranca.status !== status.EM_USO) {
-      next(ApiError.badRequest('Tranca indisponível'))
-      return
-    }
     const oldBicicleta = await BicicletaService.getBicicletaById(Number(bicicletaId))
     if (tranca.bicicletaId !== oldBicicleta.id) {
-      next(ApiError.badRequest('Tranca não está conectada a bicicleta'))
+      next(ApiError.badRequest('Bicicleta não está conectada a tranca informada'))
       return
     }
     // integration: GET Alugel /funcionario/{funcionarioId} - Throw error if funcionario doesn't exist
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: statusAcaoReparador })
     await TrancaService.removeBicicleta(Number(trancaId))
     // integration: POST Externo /enviarEmail - Send retiring data to Externo API
+    res.status(200).json(bicicleta)
+  } catch (error) {
+    if (error instanceof Error) {
+      next(ApiError.notFound(error.message))
+    }
+  }
+}
+
+// @ts-expect-error - TS1064
+export const setStatus = async (req: Request, res: Response, next: NextFunction): void => {
+  const id = Number(req.params.id)
+  const stat = req.params.statusAcao
+  if (stat !== status.REPARO_SOLICITADO && stat !== status.DISPONIVEL) {
+    next(ApiError.badRequest(
+      'Use esse endpoint apenas com "reparo solicitado" ou para desfazer uma solicitação de reparo ("disponível"), qualquer outro status é redundante'
+    ))
+  }
+  try {
+    const bicicleta = await BicicletaService.setStatus(id, stat as status)
     res.status(200).json(bicicleta)
   } catch (error) {
     if (error instanceof Error) {

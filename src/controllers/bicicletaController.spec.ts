@@ -337,22 +337,13 @@ describe('bicicletaController', () => {
       expectResCalledWith(res, next, ApiError.badRequest('Status inválido, deve ser "em reparo" ou "aposentada"'))
     })
 
-    it('should return ApiError with status 422 when tranca status is not EM_USO', async () => {
-      const req = { body: { ...retirarDaRedeBody, statusAcaoReparador: status.EM_REPARO } } as any as Request
-      const res = {} as any as Response
-      const next = jest.fn() as any as NextFunction
-      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, bicicletaId: validId, status: status.DISPONIVEL })
-      await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, ApiError.badRequest('Tranca indisponível'))
-    })
-
     it('should return ApiError with status 422 when bicicleta and tranca are not connected', async () => {
       const req = { body: { ...retirarDaRedeBody } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, bicicletaId: notFoundId, status: status.EM_USO })
       await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, ApiError.badRequest('Tranca não está conectada a bicicleta'))
+      expectResCalledWith(res, next, ApiError.badRequest('Bicicleta não está conectada a tranca informada'))
     })
 
     it('should return ApiError with status 404 when bicicleta is not found', async () => {
@@ -371,6 +362,40 @@ describe('bicicletaController', () => {
       jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValue(new Error('Tranca não encontrada'))
       await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))
+    })
+  })
+
+  describe('setStatus', () => {
+    it('should return 200 OK and the updated bicicleta', async () => {
+      const req = { params: { id: validId, statusAcao: status.REPARO_SOLICITADO } } as any as Request
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'setStatus').mockResolvedValue({ ...bicicleta, status: status.REPARO_SOLICITADO })
+      await (BicicletaController.setStatus(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, { ...bicicleta, status: status.REPARO_SOLICITADO }, 200)
+    })
+
+    it('should return ApiError with status 422 if statusAcao is nor REPARO_SOLICITADO or DISPONIVEL', async () => {
+      const req = { params: { id: validId, statusAcao: status.EM_USO } } as any as Request
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
+      const next = jest.fn() as any as NextFunction
+      await (BicicletaController.setStatus(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.badRequest('Use esse endpoint apenas com "reparo solicitado" ou para desfazer uma solicitação de reparo ("disponível"), qualquer outro status é redundante'))
+    })
+
+    it('should return ApiError with status 404 when bicicleta is not found', async () => {
+      const req = { params: { id: notFoundId, statusAcao: status.REPARO_SOLICITADO } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(BicicletaService, 'setStatus').mockRejectedValue(new Error('Bicicleta não encontrada'))
+      await (BicicletaController.setStatus(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.notFound('Bicicleta não encontrada'))
     })
   })
 })

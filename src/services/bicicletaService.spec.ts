@@ -147,4 +147,63 @@ describe('BicicletaService', () => {
       expect(BicicletaRepository.deleteBicicleta).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('setStatus', () => {
+    it('should set the status of the bicicleta to REPARO_SOLICITADO or DISPONIVEL', async () => {
+      const id = 1
+      const statusAcao = status.REPARO_SOLICITADO
+      const mockBicicleta: Bicicleta = {
+        id: 1,
+        ano: '2021',
+        modelo: 'Modelo X',
+        marca: 'Marca X',
+        numero: 1,
+        status: status.DISPONIVEL
+      }
+      jest.spyOn(BicicletaRepository, 'getBicicletaById').mockResolvedValue(mockBicicleta)
+      jest.spyOn(BicicletaRepository, 'updateBicicleta').mockResolvedValue({ ...mockBicicleta, status: statusAcao as status })
+      const result = await BicicletaService.setStatus(id, statusAcao as status)
+
+      expect(result).toEqual({ ...mockBicicleta, status: statusAcao as status })
+      expect(BicicletaRepository.getBicicletaById).toHaveBeenCalledWith(id)
+      expect(BicicletaRepository.updateBicicleta).toHaveBeenCalledWith(id, { ...mockBicicleta, status: statusAcao as status })
+    })
+
+    it('should throw error if the bicicleta is not DISPONIVEL or REPARO_SOLICITADO', async () => {
+      const id = 1
+      const statusAcao = status.NOVA
+      const mockBicicleta: Bicicleta = {
+        id: 1,
+        ano: '2021',
+        modelo: 'Modelo X',
+        marca: 'Marca X',
+        numero: 1,
+        status: status.EM_USO
+      }
+      jest.spyOn(BicicletaRepository, 'getBicicletaById').mockResolvedValue(mockBicicleta)
+      jest.spyOn(BicicletaRepository, 'updateBicicleta').mockResolvedValue(mockBicicleta)
+      await expect(BicicletaService.setStatus(id, statusAcao as status)).rejects.toThrow('Bicicleta não está como "disponível" ou "reparo solicitado"')
+      expect(BicicletaRepository.getBicicletaById).toHaveBeenCalledWith(id)
+      expect(BicicletaRepository.updateBicicleta).not.toHaveBeenCalled()
+    })
+
+    it('should throw an error when repository throws an error', async () => {
+      const errorMessage = 'Error setting status'
+      const id = 1
+      const statusAcao = status.REPARO_SOLICITADO
+      const mockBicicleta: Bicicleta = {
+        id: 1,
+        ano: '2021',
+        modelo: 'Modelo X',
+        marca: 'Marca X',
+        numero: 1,
+        status: status.DISPONIVEL
+      }
+      jest.spyOn(BicicletaRepository, 'getBicicletaById').mockResolvedValue(mockBicicleta)
+      jest.spyOn(BicicletaRepository, 'updateBicicleta').mockRejectedValue(new Error(errorMessage))
+      await expect(BicicletaService.setStatus(id, statusAcao as status)).rejects.toThrow(errorMessage)
+      expect(BicicletaRepository.getBicicletaById).toHaveBeenCalledWith(id)
+      expect(BicicletaRepository.updateBicicleta).toHaveBeenCalledWith(id, { ...mockBicicleta, status: statusAcao as status })
+    })
+  })
 })

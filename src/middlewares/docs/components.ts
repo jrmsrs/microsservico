@@ -210,6 +210,17 @@ export const components = {
       },
       description: 'ID da tranca',
       required: true
+    },
+    bicicletaStatus: {
+      in: 'path',
+      name: 'statusAcao',
+      schema: {
+        type: 'string',
+        example: statusBicicleta.REPARO_SOLICITADO,
+        default: statusBicicleta.REPARO_SOLICITADO
+      },
+      description: 'status da bicicleta',
+      required: true
     }
   }
 }

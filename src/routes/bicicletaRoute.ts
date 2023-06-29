@@ -1,13 +1,5 @@
 import express from 'express'
-import {
-  getBicicleta,
-  getBicicletaById,
-  createBicicleta,
-  updateBicicleta,
-  deleteBicicleta,
-  integrarNaRede,
-  retirarDaRede
-} from '../controllers/bicicletaController'
+import * as controller from '../controllers/bicicletaController'
 
 const router = express.Router()
 
@@ -21,7 +13,7 @@ const router = express.Router()
  *       200:
  *         description: Retorna um array com todas as bicicletas cadastradas
  */
-router.get('/', getBicicleta)
+router.get('/', controller.getBicicleta)
 
 /**
  * @swagger
@@ -39,7 +31,7 @@ router.get('/', getBicicleta)
  *       404:
  *         description: Bicicleta não encontrada
  */
-router.get('/:id', getBicicletaById)
+router.get('/:id', controller.getBicicletaById)
 
 /**
  * @swagger
@@ -58,7 +50,7 @@ router.get('/:id', getBicicletaById)
  *       422:
  *         description: Erro de validação
  */
-router.post('/', createBicicleta)
+router.post('/', controller.createBicicleta)
 
 /**
  * @swagger
@@ -81,7 +73,7 @@ router.post('/', createBicicleta)
  *       404:
  *         description: Bicicleta não encontrada
  */
-router.put('/:id', updateBicicleta)
+router.put('/:id', controller.updateBicicleta)
 
 /**
  * @swagger
@@ -99,7 +91,7 @@ router.put('/:id', updateBicicleta)
  *       404:
  *         description: Bicicleta não encontrada
  */
-router.delete('/:id', deleteBicicleta)
+router.delete('/:id', controller.deleteBicicleta)
 
 /**
  * @swagger
@@ -120,7 +112,7 @@ router.delete('/:id', deleteBicicleta)
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
  */
-router.post('/integrarNaRede', integrarNaRede)
+router.post('/integrarNaRede', controller.integrarNaRede)
 
 /**
  * @swagger
@@ -141,6 +133,25 @@ router.post('/integrarNaRede', integrarNaRede)
  *       404:
  *         description: Tranca/Bicicleta/Funcionário não encontrada(o)
  */
-router.post('/retirarDaRede', retirarDaRede)
+router.post('/retirarDaRede', controller.retirarDaRede)
+
+/**
+ * @swagger
+ * /bicicleta/{id}/status/{statusAcao}:
+ *   post:
+ *     tags: [Bicicleta]
+ *     summary: Alterar status da bicicleta.
+ *     parameters:
+ *      - $ref: '#/components/parameters/idBicicleta'
+ *      - $ref: '#/components/parameters/bicicletaStatus'
+ *     responses:
+ *       200:
+ *         description: Status alterado
+ *       422:
+ *         description: Erro de validação
+ *       404:
+ *         description: Bicicleta não encontrada
+ */
+router.post('/:id/status/:statusAcao', controller.setStatus)
 
 export default router
