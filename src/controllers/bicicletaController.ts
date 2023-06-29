@@ -3,6 +3,7 @@ import * as BicicletaService from '../services/bicicletaService'
 import * as TrancaService from '../services/trancaService'
 import { ApiError } from '../error/ApiError'
 import { status } from '../enums/statusBicicletaEnum'
+import { status as statusTranca } from '../enums/statusTrancaEnum'
 import { Aluguel, Externo } from '../http'
 
 export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosBicicleta: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
@@ -114,13 +115,13 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
   }
-  if (isNaN(Number(bicicletaId)) || isNaN(Number(funcionarioId)) || isNaN(Number(trancaId))) {
+  if (isNaN(Number(bicicletaId)) || isNaN(Number(trancaId))) {
     next(ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
     return
   }
   try {
     const tranca = await TrancaService.getTrancaById(Number(trancaId))
-    if (tranca.status !== status.DISPONIVEL) {
+    if (tranca.status !== statusTranca.DISPONIVEL) {
       next(ApiError.badRequest('Tranca indisponível'))
       return
     }
@@ -129,11 +130,20 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
       next(ApiError.badRequest('Bicicleta já integrada na rede ou aposentada'))
       return
     }
-    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
+    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: status.DISPONIVEL })
     await TrancaService.insertBicicleta(Number(trancaId), Number(bicicletaId))
-    await Externo.post('enviarEmail', criaEmail('integrada', status.DISPONIVEL, funcionario, bicicleta, tranca))
-    res.status(200).json(bicicleta)
+    const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, bicicleta, tranca)
+    await Externo.post('/enviarEmail', emailGerado)
+      .then(() => {
+        res.status(200).json({ tranca, emailGerado })
+      })
+      .catch(() => {
+        next(ApiError.internal(`\
+A bicicleta foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
+        ))
+      })
+    res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
     if (error instanceof Error) {
       next(ApiError.notFound(error.message))
@@ -148,7 +158,7 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
   }
-  if (isNaN(Number(bicicletaId)) || isNaN(Number(funcionarioId)) || isNaN(Number(trancaId))) {
+  if (isNaN(Number(bicicletaId)) || isNaN(Number(trancaId))) {
     next(ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
     return
   }
@@ -163,11 +173,20 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
       next(ApiError.badRequest('Bicicleta não está conectada a tranca informada'))
       return
     }
-    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
+    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: statusAcaoReparador })
     await TrancaService.removeBicicleta(Number(trancaId))
-    await Externo.post('enviarEmail', criaEmail('retirada', statusAcaoReparador, funcionario, bicicleta, tranca))
-    res.status(200).json(bicicleta)
+    const emailGerado = criaEmail('retirada', statusAcaoReparador, funcionario.data, bicicleta, tranca)
+    await Externo.post('/enviarEmail', emailGerado)
+      .then(() => {
+        res.status(200).json({ tranca, emailGerado })
+      })
+      .catch(() => {
+        next(ApiError.internal(`\
+A bicicleta foi retirada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
+        ))
+      })
+    res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
     if (error instanceof Error) {
       next(ApiError.notFound(error.message))

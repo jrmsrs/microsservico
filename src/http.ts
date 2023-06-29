@@ -1,7 +1,7 @@
 import Axios from 'axios'
 
 export const Aluguel = Axios.create({
-  baseURL: 'https://microsservico-aluguel.vercel.app/',
+  baseURL: 'https://microsservico-aluguel.vercel.app',
   headers: {
     'Content-type': 'application/json'
   }

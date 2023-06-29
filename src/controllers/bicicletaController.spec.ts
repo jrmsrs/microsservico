@@ -3,6 +3,7 @@ import * as BicicletaController from './bicicletaController'
 import * as BicicletaService from '../services/bicicletaService'
 import * as TrancaService from '../services/trancaService'
 import { status } from '../enums/statusBicicletaEnum'
+import { status as statusTranca } from '../enums/statusTrancaEnum'
 import { ApiError } from '../error/ApiError'
 import { Bicicleta } from '../models/bicicletaModel'
 import { Aluguel, Externo } from '../http'
@@ -224,6 +225,15 @@ describe('bicicletaController', () => {
     funcionarioId: validId
   }
 
+  const funcionario = {
+    matricula: validId,
+    nome: 'Funcionario 1',
+    cpf: '11111111111',
+    email: 'funcionario@email.com',
+    idade: 33,
+    funcao: 'Funcionario'
+  }
+
   describe('integrarNaRede', () => {
     it('should return 200 OK and the updated bicicleta', async () => {
       const req = { body: { ...integrarNaRedeBody } } as any as Request
@@ -232,14 +242,14 @@ describe('bicicletaController', () => {
         json: jest.fn()
       } as unknown as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
+      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
       jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.NOVA })
       jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
       jest.spyOn(TrancaService, 'insertBicicleta').mockResolvedValue({ ...tranca, status: status.EM_USO })
-      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ id: 1, email: 'jose@email.com', nome: 'Jose' })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
       jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
       await (BicicletaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, { ...bicicleta, status: status.DISPONIVEL }, 200)
+      expectResCalledWith(res, next, expect.objectContaining({ bicicleta: { ...bicicleta, status: status.DISPONIVEL } }), 200)
     })
 
     it('should return ApiError with status 422 when body is missing a field', async () => {
@@ -271,7 +281,7 @@ describe('bicicletaController', () => {
       const req = { body: { ...integrarNaRedeBody } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
+      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
       jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
       await (BicicletaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.badRequest('Bicicleta já integrada na rede ou aposentada'))
@@ -281,7 +291,7 @@ describe('bicicletaController', () => {
       const req = { body: { ...integrarNaRedeBody, bicicletaId: notFoundId } } as any as Request
       const res = {} as any as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
+      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
       jest.spyOn(BicicletaService, 'getBicicletaById').mockRejectedValueOnce(new Error('Bicicleta não encontrada'))
       await (BicicletaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Bicicleta não encontrada'))
@@ -294,6 +304,20 @@ describe('bicicletaController', () => {
       jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValueOnce(new Error('Tranca não encontrada'))
       await (BicicletaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))
+    })
+
+    it('should return ApiError with status 500 if email service fails', async () => {
+      const req = { body: { ...integrarNaRedeBody } } as any as Request
+      const res = {} as any as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
+      jest.spyOn(TrancaService, 'insertBicicleta').mockResolvedValue({ ...tranca, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.NOVA })
+      jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
+      jest.spyOn(Externo, 'post').mockRejectedValueOnce(new Error('Email service failed'))
+      await (BicicletaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.internal(expect.stringContaining('A bicicleta foi integrada, mas')))
     })
   })
 
@@ -313,11 +337,11 @@ describe('bicicletaController', () => {
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, bicicletaId: validId, status: status.EM_USO })
       jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
       jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.EM_REPARO })
-      jest.spyOn(TrancaService, 'removeBicicleta').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
-      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ id: 1, email: 'jose@email.com', nome: 'Jose' })
+      jest.spyOn(TrancaService, 'removeBicicleta').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
       jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
       await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, { ...bicicleta, status: status.EM_REPARO }, 200)
+      expectResCalledWith(res, next, expect.objectContaining({ bicicleta: { ...bicicleta, status: status.EM_REPARO } }), 200)
     })
 
     it('should return ApiError with status 422 when body is missing a field', async () => {
@@ -369,6 +393,23 @@ describe('bicicletaController', () => {
       jest.spyOn(TrancaService, 'getTrancaById').mockRejectedValue(new Error('Tranca não encontrada'))
       await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.notFound('Tranca não encontrada'))
+    })
+
+    it('should return ApiError with status 500 if email service fails', async () => {
+      const req = { body: { ...retirarDaRedeBody } } as any as Request
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
+      const next = jest.fn() as any as NextFunction
+      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, bicicletaId: validId, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.EM_REPARO })
+      jest.spyOn(TrancaService, 'removeBicicleta').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
+      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
+      jest.spyOn(Externo, 'post').mockRejectedValue({ status: 500 })
+      await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
+      expectResCalledWith(res, next, ApiError.internal(expect.stringContaining('A bicicleta foi retirada, mas')))
     })
   })
 

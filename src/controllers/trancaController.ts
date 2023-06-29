@@ -134,11 +134,10 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
   }
-  if (isNaN(trancaId) || isNaN(funcionarioId) || isNaN(totemId)) {
+  if (isNaN(trancaId) || isNaN(totemId)) {
     next(ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
     return
   }
-
   try {
     await TotemService.getTotemById(totemId)
     const oldTranca = await TrancaService.getTrancaById(trancaId)
@@ -146,11 +145,19 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
       next(ApiError.badRequest('Tranca já integrada na rede ou aposentada'))
       return
     }
-    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
+    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: status.DISPONIVEL, totemId }) as TrancaResponse
     tranca.localizacao = await TotemService.getTotemById(totemId).then((totem) => totem.localizacao).catch(() => 'Não instalada')
-    await Externo.post('enviarEmail', criaEmail('integrada', status.DISPONIVEL, funcionario, tranca))
-    res.status(200).json(tranca)
+    const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, tranca)
+    await Externo.post('/enviarEmail', emailGerado)
+      .then(() => {
+        res.status(200).json({ tranca, emailGerado })
+      })
+      .catch(() => {
+        next(ApiError.internal(`\
+A tranca foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
+        ))
+      })
   } catch (error) {
     if (error instanceof Error) {
       next(ApiError.notFound(error.message))
@@ -165,7 +172,7 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
   }
-  if (isNaN(trancaId) || isNaN(funcionarioId) || isNaN(totemId)) {
+  if (isNaN(trancaId) || isNaN(totemId)) {
     next(ApiError.badRequest('Algum campo foi preenchido com caracter(es) inválido(s)'))
     return
   }
@@ -184,11 +191,20 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
       next(ApiError.badRequest('Tranca não está instalada no totem informado'))
       return
     }
-    const funcionario = await Aluguel.get(`funcionario/${Number(funcionarioId)}`)
+    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: statusAcaoReparador, totemId: undefined }) as TrancaResponse
     tranca.localizacao = 'Não instalada'
-    await Externo.post('enviarEmail', criaEmail('integrada', status.DISPONIVEL, funcionario, tranca))
-    res.status(200).json(tranca)
+    const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, tranca)
+    await Externo.post('/enviarEmail', emailGerado)
+      .then(() => {
+        res.status(200).json({ tranca, emailGerado })
+      })
+      .catch(() => {
+        next(ApiError.internal(`\
+A tranca foi retirada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
+        ))
+      })
+    res.status(200).json({ tranca, emailGerado })
   } catch (error) {
     if (error instanceof Error) {
       next(ApiError.notFound(error.message))
