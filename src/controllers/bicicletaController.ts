@@ -110,7 +110,8 @@ export const deleteBicicleta = async (req: Request, res: Response, next: NextFun
 
 // @ts-expect-error - TS1064
 export const integrarNaRede = async (req: Request, res: Response, next: NextFunction): void => {
-  const { bicicletaId, funcionarioId, trancaId } = req.body
+  const { bicicletaId, trancaId } = req.body
+  const funcionarioId = /^[a-z0-9,-]{36}$/.exec(req.body.funcionarioId)?.[0] ?? null
   if (bicicletaId === undefined || funcionarioId === undefined || trancaId === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
@@ -139,9 +140,7 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
         res.status(200).json({ tranca, emailGerado })
       })
       .catch(() => {
-        next(ApiError.internal(`\
-A bicicleta foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
-        ))
+        next(ApiError.internal('A bicicleta foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ' + String(emailGerado.mensagem)))
       })
     res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
@@ -153,7 +152,8 @@ A bicicleta foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ${Str
 
 // @ts-expect-error - TS1064
 export const retirarDaRede = async (req: Request, res: Response, next: NextFunction): void => {
-  const { bicicletaId, funcionarioId, trancaId, statusAcaoReparador } = req.body
+  const { bicicletaId, trancaId, statusAcaoReparador } = req.body
+  const funcionarioId = /^[a-z0-9,-]{36}$/.exec(req.body.funcionarioId)?.[0] ?? null
   if (bicicletaId === undefined || funcionarioId === undefined || trancaId === undefined || statusAcaoReparador === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return

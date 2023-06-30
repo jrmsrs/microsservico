@@ -129,7 +129,8 @@ export const deleteTranca = async (req: Request, res: Response, next: NextFuncti
 
 // @ts-expect-error - TS1064
 export const integrarNaRede = async (req: Request, res: Response, next: NextFunction): void => {
-  const { trancaId, funcionarioId, totemId } = req.body
+  const { trancaId, totemId } = req.body
+  const funcionarioId = /^[a-z0-9,-]{36}$/.exec(req.body.funcionarioId)?.[0] ?? null
   if (trancaId === undefined || funcionarioId === undefined || totemId === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return
@@ -167,7 +168,8 @@ A tranca foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ${String
 
 // @ts-expect-error - TS1064
 export const retirarDaRede = async (req: Request, res: Response, next: NextFunction): void => {
-  const { trancaId, funcionarioId, totemId, statusAcaoReparador } = req.body
+  const { trancaId, totemId, statusAcaoReparador } = req.body
+  const funcionarioId = /^[a-z0-9,-]{36}$/.exec(req.body.funcionarioId)?.[0] ?? null
   if (trancaId === undefined || funcionarioId === undefined || totemId === undefined || statusAcaoReparador === undefined) {
     next(ApiError.badRequest('Campos obrigatórios não preenchidos'))
     return

@@ -397,17 +397,14 @@ describe('bicicletaController', () => {
 
     it('should return ApiError with status 500 if email service fails', async () => {
       const req = { body: { ...retirarDaRedeBody } } as any as Request
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      } as unknown as Response
+      const res = {} as unknown as Response
       const next = jest.fn() as any as NextFunction
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, bicicletaId: validId, status: status.EM_USO })
       jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
       jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.EM_REPARO })
       jest.spyOn(TrancaService, 'removeBicicleta').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
       jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
-      jest.spyOn(Externo, 'post').mockRejectedValue({ status: 500 })
+      jest.spyOn(Externo, 'post').mockRejectedValue(new Error('Email service failed'))
       await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, ApiError.internal(expect.stringContaining('A bicicleta foi retirada, mas')))
     })
