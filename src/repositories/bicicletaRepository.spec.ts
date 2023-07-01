@@ -1,90 +1,236 @@
+import {
+  getBicicletas,
+  getBicicletaById,
+  createBicicleta,
+  updateBicicleta,
+  deleteBicicleta
+} from './bicicletaRepository'
+import { Bicicleta } from '../models/bicicletaModel'
 import { status } from '../enums/statusBicicletaEnum'
+import { db } from '../db'
 
-import * as BicicletaRepository from './bicicletaRepository'
+const mockFrom = {
+  url: new URL('http://localhost:3000'),
+  headers: {},
+  select: jest.fn().mockReturnThis(),
+  insert: jest.fn().mockReturnThis(),
+  delete: jest.fn().mockReturnThis(),
+  upsert: jest.fn().mockReturnThis(),
+  update: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis()
+}
 
-const testExistentId = 3
-const testNonExistentId = -1
+const bicicletaGen = (id: number): Bicicleta => ({
+  id,
+  marca: `marca ${id}`,
+  modelo: `modelo ${id}`,
+  numero: id,
+  ano: '2021',
+  status: status.DISPONIVEL
+})
 
 describe('Repository bicicletaRepository', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
   describe('Repository getBicicletas', () => {
     it('should get a list of bicicletas', async () => {
-      const testBicicletas: any[] = []
-      for (let i = 0; i < 5; i++) {
-        testBicicletas.push({
-          id: i + 1, marca: `Marca ${i + 1}`, modelo: `Repositoryo ${i + 1}`
-        })
-      }
-      const result = await BicicletaRepository.getBicicletas()
-      expect(result[0].id).toEqual(testBicicletas[0].id)
+      const testBicicletas: Bicicleta[] = [bicicletaGen(1), bicicletaGen(2), bicicletaGen(3)]
+      const mock = { ...mockFrom, select: jest.fn().mockResolvedValue({ data: testBicicletas, error: null }) }
+      jest.spyOn((db), 'from').mockImplementationOnce(() => mock)
+      const result = await getBicicletas() // as Array<{ id: number, localizacao: string, descricao: string }>
+      expect(result[0].id).toEqual(1)
       expect(result[result.length - 1].id).toEqual(testBicicletas[testBicicletas.length - 1].id)
+    })
+
+    it('should throw an error if database returns an error', async () => {
+      try {
+        const mock = { ...mockFrom, select: jest.fn().mockResolvedValue({ data: null, error: { message: 'error XYZ' } }) }
+        jest.spyOn((db), 'from').mockImplementationOnce(() => mock)
+        await getBicicletas()
+        expect(true).toBe(false)
+      } catch (error) {
+        if (error instanceof Error) {
+          expect(error.message).toEqual('Erro no banco de dados: error XYZ')
+        } else expect(true).toBe(false)
+      }
     })
   })
 
   describe('Repository getBicicletaById', () => {
-    it('should get the bicicleta with the given ID', async () => {
-      const testBicicleta = {
-        id: testExistentId, marca: `Marca ${testExistentId}`, modelo: `Repositoryo ${testExistentId}`
+    it('should get a bicicleta by id', async () => {
+      const testBicicleta: Bicicleta = bicicletaGen(1)
+      const mock = {
+        ...mockFrom,
+        eq: jest.fn().mockReturnValue({ data: [testBicicleta], error: null })
       }
-      const result = await BicicletaRepository.getBicicletaById(testExistentId)
-      expect(result.id).toEqual(testBicicleta.id)
+      jest.spyOn(db, 'from').mockReturnValue(mock)
+      const result = await getBicicletaById(1)
+      expect(mock.eq).toHaveBeenCalledWith('id', 1)
+      expect(result).toEqual(testBicicleta)
     })
+
     it('should throw an error if bicicleta is not found', async () => {
       try {
-        await BicicletaRepository.getBicicletaById(testNonExistentId)
+        const mock = { ...mockFrom, eq: jest.fn().mockReturnValue({ data: [], error: null }) }
+        jest.spyOn(db, 'from').mockReturnValue(mock)
+        await getBicicletaById(1)
         expect(true).toBe(false)
       } catch (error) {
         if (error instanceof Error) {
           expect(error.message).toEqual('Bicicleta não encontrada')
-        } else expect(true).toBe(false)
+        } else {
+          expect(true).toBe(false)
+        }
+      }
+    })
+
+    it('should throw an error if database returns an error', async () => {
+      try {
+        const mock = { ...mockFrom, eq: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } }) }
+        jest.spyOn(db, 'from').mockReturnValue(mock)
+        await getBicicletaById(1)
+        expect(true).toBe(false)
+      } catch (error) {
+        if (error instanceof Error) {
+          expect(error.message).toEqual('Erro no banco de dados: error XYZ')
+        } else {
+          expect(true).toBe(false)
+        }
       }
     })
   })
 
   describe('Repository createBicicleta', () => {
-    it('should create a new bicicleta', async () => {
-      const testBicicleta = { marca: 'Marca X', modelo: 'Descrição X', ano: '2021', numero: 0, status: status.NOVA }
-      const result = await BicicletaRepository.createBicicleta(testBicicleta)
-      expect(result).toEqual(testBicicleta)
-    })
-    it('should create a new bicicleta with id 1 if there are no bicicletas', async () => {
-      const testBicicleta = { marca: 'Marca Y', modelo: 'Descrição Y', ano: '2021', numero: 0, status: status.NOVA }
-      const result = await BicicletaRepository.createBicicleta(testBicicleta, [])
-      expect(result).toEqual({ ...testBicicleta, id: 1 })
+    it('should create a bicicleta', async () => {
+      const testBicicleta: Bicicleta = bicicletaGen(1)
+      const mock = {
+        ...mockFrom,
+        select: jest.fn().mockReturnValue({ data: [{ ...testBicicleta, status: status.NOVA }], error: null })
+      }
+      jest.spyOn(db, 'from').mockReturnValue(mock)
+      const result = await createBicicleta(testBicicleta)
+      expect(mock.insert).toHaveBeenCalledWith({ ...testBicicleta, status: status.NOVA })
+      expect(result).toEqual({ ...testBicicleta, status: status.NOVA })
     })
   })
 
-  describe('Repository updateBicicleta', () => {
-    it('should update the bicicleta with the given ID if found', async () => {
-      const testBicicleta = { testExistentId, marca: 'Marca X', modelo: 'Descrição X', ano: '2021', numero: 1, status: 'Disponível' }
-      const result = await BicicletaRepository.updateBicicleta(testExistentId, testBicicleta)
-      expect(result).toEqual({ ...testBicicleta, id: testExistentId })
-    })
-    it('should throw an error if the bicicleta with the given ID is not found', async () => {
-      try {
-        const testBicicleta = { testNonExistentId, marca: 'Marca X', modelo: 'Descrição X', ano: '2021', numero: 1, status: 'Disponível' }
-        await BicicletaRepository.updateBicicleta(testNonExistentId, testBicicleta)
-        expect(true).toBe(false)
-      } catch (error) {
-        if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
-          expect(error.message).toBe('Bicicleta não encontrada')
-        } else expect(true).toBe(false)
+  it('should throw an error if database returns an error', async () => {
+    try {
+      const testBicicleta: Bicicleta = bicicletaGen(1)
+      const mock = {
+        ...mockFrom,
+        select: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } })
       }
-    })
+      jest.spyOn(db, 'from').mockReturnValue(mock)
+      await createBicicleta(testBicicleta)
+      expect(true).toBe(false)
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toEqual('Erro no banco de dados: error XYZ')
+      } else {
+        expect(true).toBe(false)
+      }
+    }
+  })
+})
+
+describe('Repository updateBicicleta', () => {
+  it('should update a bicicleta', async () => {
+    const testBicicleta: Bicicleta = bicicletaGen(1)
+    const mock = {
+      ...mockFrom,
+      select: jest.fn().mockReturnValue({ data: [{ ...testBicicleta, marca: 'updated' }], error: null })
+    }
+    jest.spyOn(db, 'from').mockReturnValue(mock)
+    const result = await updateBicicleta(1, { ...testBicicleta, marca: 'updated' })
+    expect(mock.update).toHaveBeenCalledWith({ ...testBicicleta, marca: 'updated' })
+    expect(result).toEqual({ ...testBicicleta, marca: 'updated' })
+  })
+
+  it('should throw an error if bicicleta is not found', async () => {
+    try {
+      const testBicicleta: Bicicleta = bicicletaGen(1)
+      const mock = {
+        ...mockFrom,
+        select: jest.fn().mockReturnValue({ data: [], error: null })
+      }
+      jest.spyOn(db, 'from').mockReturnValue(mock)
+      await updateBicicleta(1, testBicicleta)
+      expect(true).toBe(false)
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toEqual('Bicicleta não encontrada')
+      } else {
+        expect(true).toBe(false)
+      }
+    }
+  })
+
+  it('should throw an error if database returns an error', async () => {
+    try {
+      const testBicicleta: Bicicleta = bicicletaGen(1)
+      const mock = {
+        ...mockFrom,
+        select: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } })
+      }
+      jest.spyOn(db, 'from').mockReturnValue(mock)
+      await updateBicicleta(1, testBicicleta)
+      expect(true).toBe(false)
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toEqual('Erro no banco de dados: error XYZ')
+      } else {
+        expect(true).toBe(false)
+      }
+    }
   })
 
   describe('Repository deleteBicicleta', () => {
-    it('should delete the bicicleta with the given ID if found', async () => {
-      const result = await BicicletaRepository.deleteBicicleta(testExistentId)
-      expect(result).toBeUndefined()
+    it('should delete a bicicleta', async () => {
+      const testBicicleta: Bicicleta = bicicletaGen(1)
+      const mock = {
+        ...mockFrom,
+        select: jest.fn().mockReturnValue({ data: [testBicicleta], error: null })
+      }
+      jest.spyOn(db, 'from').mockReturnValue(mock)
+      await deleteBicicleta(1)
+      expect(mock.delete).toHaveBeenCalledWith()
     })
-    it('should throw an error if the bicicleta with the given ID is not found', async () => {
+
+    it('should throw an error if bicicleta is not found', async () => {
       try {
-        await BicicletaRepository.deleteBicicleta(testNonExistentId)
+        const mock = {
+          ...mockFrom,
+          select: jest.fn().mockReturnValue({ data: [], error: null })
+        }
+        jest.spyOn(db, 'from').mockReturnValue(mock)
+        await deleteBicicleta(1)
         expect(true).toBe(false)
       } catch (error) {
-        if (error instanceof Error && error.message === 'Bicicleta não encontrada') {
-          expect(error.message).toBe('Bicicleta não encontrada')
-        } else expect(true).toBe(false)
+        if (error instanceof Error) {
+          expect(error.message).toEqual('Bicicleta não encontrada')
+        } else {
+          expect(true).toBe(false)
+        }
+      }
+    })
+
+    it('should throw an error if database returns an error', async () => {
+      try {
+        const mock = {
+          ...mockFrom,
+          select: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } })
+        }
+        jest.spyOn(db, 'from').mockReturnValue(mock)
+        await deleteBicicleta(1)
+        expect(true).toBe(false)
+      } catch (error) {
+        if (error instanceof Error) {
+          expect(error.message).toEqual('Erro no banco de dados: error XYZ')
+        } else {
+          expect(true).toBe(false)
+        }
       }
     })
   })

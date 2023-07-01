@@ -1,52 +1,66 @@
-import { Totem } from '../models/totemModel'
-
-let totens: Totem[] = [
-  {
-    id: 1,
-    localizacao: 'Localização 1',
-    descricao: 'Descrição 1'
-  },
-  {
-    id: 2,
-    localizacao: 'Localização 2',
-    descricao: 'Descrição 2'
-  },
-  {
-    id: 3,
-    localizacao: 'Localização 3',
-    descricao: 'Descrição 3'
-  }
-]
+import { db } from '../db'
+import type { Totem } from '../models/totemModel'
 
 export async function getTotens (): Promise<Totem[]> {
+  const { data: totens, error: dbError } = await db
+    .from('totem')
+    .select('*')
+  if (dbError !== null) {
+    throw new Error('Erro no banco de dados: ' + dbError?.message)
+  }
   return totens
 }
 
 export async function getTotemById (id: number): Promise<Totem> {
-  const totem = totens.find((totem) => totem.id === id)
-  if (totem !== undefined) return totem
-  throw new Error('Totem não encontrado')
+  const { data: totem, error: dbError } = await db
+    .from('totem')
+    .select('*')
+    .eq('id', id)
+  if (dbError !== null) {
+    throw new Error('Erro no banco de dados: ' + dbError?.message)
+  }
+  if (totem.length === 0) {
+    throw new Error('Totem não encontrado')
+  }
+  return totem[0]
 }
 
-export async function createTotem (totem: Totem, array = totens): Promise<Totem> {
-  // get last id and add 1, if undefined, set id to 1
-  totem.id = (array[array.length - 1]?.id ?? 0) + 1
-  array.push(totem)
-  return totem
+export async function createTotem (totem: Totem): Promise<Totem> {
+  const { data: newTotem, error: dbError } = await db
+    .from('totem')
+    .insert(totem)
+    .select()
+  if (dbError !== null) {
+    throw new Error('Erro no banco de dados: ' + dbError?.message)
+  }
+  return newTotem[0]
 }
 
 export async function updateTotem (id: number, updatedTotem: Totem): Promise<Totem> {
-  const index = totens.findIndex((totem) => totem.id === id)
-  if (index !== -1) {
-    totens[index] = { ...updatedTotem, id }
-    return totens[index]
+  const { data: newTotem, error: dbError } = await db
+    .from('totem')
+    .update(updatedTotem)
+    .eq('id', id)
+    .select()
+  if (dbError !== null) {
+    throw new Error('Erro no banco de dados: ' + dbError?.message)
   }
-  throw new Error('Totem não encontrado')
+  if (newTotem.length === 0) {
+    throw new Error('Totem não encontrado')
+  }
+  return newTotem[0]
 }
 
 export async function deleteTotem (id: number): Promise<void> {
-  const beforeLenght = totens.length
-  totens = totens.filter((totem) => totem.id !== id)
-  if (beforeLenght !== totens.length) return
-  throw new Error('Totem não encontrado')
+  const { data: deletedTotem, error: dbError } = await db
+    .from('totem')
+    .delete()
+    .eq('id', id)
+    .select()
+  if (dbError !== null) {
+    throw new Error('Erro no banco de dados: ' + dbError?.message)
+  }
+  if (deletedTotem.length === 0) {
+    throw new Error('Totem não encontrado')
+  }
 }
