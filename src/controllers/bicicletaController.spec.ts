@@ -182,6 +182,7 @@ describe('bicicletaController', () => {
       } as unknown as Response
       const next = jest.fn() as any as NextFunction
       jest.spyOn(BicicletaService, 'deleteBicicleta').mockResolvedValue()
+      jest.spyOn(TrancaService, 'getTrancaByBicicletaId').mockResolvedValue(null)
       await (BicicletaController.deleteBicicleta(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, undefined, 200)
     })

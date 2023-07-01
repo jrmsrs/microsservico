@@ -157,6 +157,24 @@ describe('TotemService', () => {
 
   describe('getAllBicicletas', () => {
     it('should return an array of bicicletas of the same totem', async () => {
+      const mockTrancas = [
+        {
+          id: 1,
+          numero: 1,
+          anoDeFabricacao: '2023',
+          modelo: 'Modelo 1',
+          totemId: 1,
+          bicicletaId: 1
+        },
+        {
+          id: 2,
+          numero: 2,
+          anoDeFabricacao: '2023',
+          modelo: 'Modelo 2',
+          totemId: 1,
+          bicicletaId: 2
+        }
+      ]
       const mockBicicletas = [
         {
           id: 1,
@@ -175,6 +193,7 @@ describe('TotemService', () => {
           status: 'Disponível'
         }
       ]
+      jest.spyOn(TrancaRepository, 'getTrancas').mockResolvedValue(mockTrancas)
       jest.spyOn(BicicletaRepository, 'getBicicletas').mockResolvedValue(mockBicicletas)
       const result = await TotemService.getAllBicicletas(1)
       expect(result).toEqual(mockBicicletas)

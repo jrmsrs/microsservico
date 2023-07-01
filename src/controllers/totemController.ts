@@ -83,6 +83,7 @@ export const getAllTrancas = async (req: Request, res: Response, next: NextFunct
     return
   }
   try {
+    await TotemService.getTotemById(id)
     const trancas = await TotemService.getAllTrancas(id)
     res.status(200).json(trancas)
   } catch (error) {
@@ -100,6 +101,7 @@ export const getAllBicicletas = async (req: Request, res: Response, next: NextFu
     return
   }
   try {
+    await TotemService.getTotemById(id)
     const bicicletas = await TotemService.getAllBicicletas(id)
     res.status(200).json(bicicletas)
   } catch (error) {
