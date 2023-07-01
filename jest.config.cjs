@@ -6,5 +6,8 @@ module.exports = {
   testEnvironment: 'node',
   transform: {
     '.+\\.ts$': 'ts-jest'
+  },
+  moduleNameMapper: {
+    '^@supabase/supabase-js$': '<rootDir>/src/__mocks__/supabase.ts'
   }
 }

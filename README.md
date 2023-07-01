@@ -8,10 +8,10 @@ microsserviço para gerenciamento de equipamentos de um sistema de controle de b
 
 gerencia bicicletas, cadeados e totens
 
-## integrações 🌐
+## integrações (grupo) 🌐
 
-- [microserviço aluguel](https://github.com/kevincrys/microsservicoAluguel): gerenciamento de funcionários, cliclistas e aluguéis
-- [microserviço externo](https://github.com/Mad-Clap/Externo_PM): gerenciamento de cobranças, comunicação com sistemas externos de envio de e-mail e cartao de credito
+- [microserviço aluguel (kevincrys/microsservicoAluguel)](https://github.com/kevincrys/microsservicoAluguel): gerenciamento de funcionários, cliclistas e aluguéis
+- [microserviço externo (Mad-Clap/Externo_PM)](https://github.com/Mad-Clap/Externo_PM): gerenciamento de cobranças, comunicação com sistemas externos de envio de e-mail e cartao de credito
 
 ## setup do ambiente 🛠
 
@@ -20,10 +20,14 @@ gerencia bicicletas, cadeados e totens
 - node.js + express
 - typescript
 
+### banco de dados 💾
+
+- [supabase](https://supabase.io/) ([postgresql](https://www.postgresql.org/)) - banco de dados relacional com api restful
+
 ### repositório remoto 📡
 
 - [github](http://github.com/jrmsrs/microsservico) + github actions
-  
+
 ### testes 🧪
 
 - [jest](https://jestjs.io/) - testes de unidade, mocks e cobertura
@@ -57,3 +61,4 @@ gerencia bicicletas, cadeados e totens
 ### features ✨
 
 - realiza testes automaticamente antes de cada commit para evitar códigos quebrados com o pacote [husky](https://github.com/typicode/husky)
+- schemes do banco supabase auto-gerado com o script `yarn gentypes`
