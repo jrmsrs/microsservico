@@ -18,7 +18,7 @@ jobs:
         run: yarn
   
       - name: Test and coverage
-        run: yarn test:cov
+        run: yarn unit:cov
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
