@@ -11,6 +11,11 @@ const testBicicletaProperties = (object: object): void => {
   })
 }
 
+const expectError = (response: request.Response, code: number, message: string): void => {
+  expect(response.status).toBe(code)
+  expect(response.body).toEqual({ code, message })
+}
+
 describe('Route bicicleta', () => {
   const bicicleta = {
     modelo: 'Teste',
@@ -22,8 +27,7 @@ describe('Route bicicleta', () => {
   describe('POST /bicicleta', () => {
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).post('/bicicleta').send({})
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'Campos obrigatórios não preenchidos' })
+      expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
 
     it('should return 201 and the created bicicleta', async () => {
@@ -47,14 +51,12 @@ describe('Route bicicleta', () => {
   describe('GET /bicicleta/:id', () => {
     it('should return 404 NOT FOUND', async () => {
       const response = await request(app).get('/bicicleta/-1')
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Bicicleta não encontrada' })
+      expectError(response, 404, 'Bicicleta não encontrada')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).get('/bicicleta/invalid-id')
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'ID inválido' })
+      expectError(response, 422, 'ID inválido')
     })
 
     it('should return 200 and a bicicleta', async () => {
@@ -67,14 +69,12 @@ describe('Route bicicleta', () => {
   describe('PUT /bicicleta/:id', () => {
     it('should return 404 NOT FOUND', async () => {
       const response = await request(app).put('/bicicleta/-1').send(bicicleta)
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Bicicleta não encontrada' })
+      expectError(response, 404, 'Bicicleta não encontrada')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).put('/bicicleta/invalid-id').send(bicicleta)
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'ID inválido' })
+      expectError(response, 422, 'ID inválido')
     })
 
     it('should return 200 and the updated bicicleta', async () => {
@@ -91,14 +91,12 @@ describe('Route bicicleta', () => {
         trancaId: -1,
         bicicletaId: generatedBicicletaId
       })
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Tranca não encontrada' })
+      expectError(response, 404, 'Tranca não encontrada')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).post('/bicicleta/integrarNaRede').send({})
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'Campos obrigatórios não preenchidos' })
+      expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
   })
 
@@ -110,28 +108,24 @@ describe('Route bicicleta', () => {
         bicicletaId: generatedBicicletaId,
         statusAcaoReparador: 'em reparo'
       })
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Tranca não encontrada' })
+      expectError(response, 404, 'Tranca não encontrada')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).post('/bicicleta/retirarDaRede').send({})
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'Campos obrigatórios não preenchidos' })
+      expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
   })
 
   describe('DELETE /bicicleta/:id', () => {
     it('should return 404 NOT FOUND', async () => {
       const response = await request(app).delete('/bicicleta/-1')
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Bicicleta não encontrada' })
+      expectError(response, 404, 'Bicicleta não encontrada')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).delete('/bicicleta/invalid-id')
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'ID inválido' })
+      expectError(response, 422, 'ID inválido')
     })
 
     it('should return 200 OK', async () => {

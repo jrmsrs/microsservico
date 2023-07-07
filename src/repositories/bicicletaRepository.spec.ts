@@ -72,16 +72,17 @@ describe('Repository bicicletaRepository', () => {
 
     it('should throw an error if bicicleta is not found', async () => {
       try {
-        const mock = { ...mockFrom, eq: jest.fn().mockReturnValue({ data: [], error: null }) }
+        const mock = {
+          ...mockFrom,
+          eq: jest.fn().mockReturnValue({ data: [], error: null })
+        }
         jest.spyOn(db, 'from').mockReturnValue(mock)
         await getBicicletaById(1)
         expect(true).toBe(false)
       } catch (error) {
         if (error instanceof Error) {
           expect(error.message).toEqual('Bicicleta não encontrada')
-        } else {
-          expect(true).toBe(false)
-        }
+        } else expect(true).toBe(false)
       }
     })
 
@@ -226,11 +227,8 @@ describe('Repository updateBicicleta', () => {
         await deleteBicicleta(1)
         expect(true).toBe(false)
       } catch (error) {
-        if (error instanceof Error) {
-          expect(error.message).toEqual('Erro no banco de dados: error XYZ')
-        } else {
-          expect(true).toBe(false)
-        }
+        if (error instanceof Error) expect(error.message).toEqual('Erro no banco de dados: error XYZ')
+        else expect(true).toBe(false)
       }
     })
   })

@@ -83,16 +83,21 @@ describe('Repository totemRepository', () => {
 
     it('should throw an error if database returns an error', async () => {
       try {
-        const mock = { ...mockFrom, eq: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } }) }
+        const mock = {
+          ...mockFrom,
+          eq: jest.fn().mockReturnValue({
+            data: null,
+            error: {
+              message: 'error XYZ'
+            }
+          })
+        }
         jest.spyOn(db, 'from').mockReturnValue(mock)
         await getTotemById(1)
         expect(true).toBe(false)
       } catch (error) {
-        if (error instanceof Error) {
-          expect(error.message).toEqual('Erro no banco de dados: error XYZ')
-        } else {
-          expect(true).toBe(false)
-        }
+        if (error instanceof Error) expect(error.message).toEqual('Erro no banco de dados: error XYZ')
+        else expect(true).toBe(false)
       }
     })
   })
@@ -214,10 +219,7 @@ describe('Repository updateTotem', () => {
 
     it('should throw an error if database returns an error', async () => {
       try {
-        const mock = {
-          ...mockFrom,
-          select: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } })
-        }
+        const mock = { ...mockFrom, select: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } }) }
         jest.spyOn(db, 'from').mockReturnValue(mock)
         await deleteTotem(1)
         expect(true).toBe(false)

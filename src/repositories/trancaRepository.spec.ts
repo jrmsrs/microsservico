@@ -208,11 +208,8 @@ describe('Repository updateTranca', () => {
         await deleteTranca(1)
         expect(true).toBe(false)
       } catch (error) {
-        if (error instanceof Error) {
-          expect(error.message).toEqual('Tranca não encontrada')
-        } else {
-          expect(true).toBe(false)
-        }
+        if (error instanceof Error) expect(error.message).toEqual('Tranca não encontrada')
+        else expect(true).toBe(false)
       }
     })
 
@@ -220,7 +217,9 @@ describe('Repository updateTranca', () => {
       try {
         const mock = {
           ...mockFrom,
-          select: jest.fn().mockReturnValue({ data: null, error: { message: 'error XYZ' } })
+          select: jest.fn().mockReturnValue({
+            data: null, error: { message: 'error XYZ' }
+          })
         }
         jest.spyOn(db, 'from').mockReturnValue(mock)
         await deleteTranca(1)
@@ -273,9 +272,7 @@ describe('Repository updateTranca', () => {
       } catch (error) {
         if (error instanceof Error) {
           expect(error.message).toEqual('Erro no banco de dados: error XYZ')
-        } else {
-          expect(true).toBe(false)
-        }
+        } else expect(true).toBe(false)
       }
     })
   })

@@ -16,11 +16,15 @@ describe('Route totem', () => {
     })
   }
 
+  const expectError = (response: request.Response, code: number, message: string): void => {
+    expect(response.status).toBe(code)
+    expect(response.body).toEqual({ code, message })
+  }
+
   describe('POST /totem', () => {
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).post('/totem').send({})
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'Campos obrigatórios não preenchidos' })
+      expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
 
     it('should return 201 and the created totem', async () => {
@@ -44,14 +48,12 @@ describe('Route totem', () => {
   describe('GET /totem/:id', () => {
     it('should return 404 NOT FOUND', async () => {
       const response = await request(app).get('/totem/-1')
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Totem não encontrado' })
+      expectError(response, 404, 'Totem não encontrado')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).get('/totem/invalid-id')
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'ID inválido' })
+      expectError(response, 422, 'ID inválido')
     })
 
     it('should return 200 and a totem', async () => {
@@ -64,14 +66,12 @@ describe('Route totem', () => {
   describe('PUT /totem/:id', () => {
     it('should return 404 NOT FOUND', async () => {
       const response = await request(app).put('/totem/-1').send(totem)
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Totem não encontrado' })
+      expectError(response, 404, 'Totem não encontrado')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).put(`/totem/${generatedTotemId}`).send({})
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'Campos obrigatórios não preenchidos' })
+      expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
 
     it('should return 200 and the updated totem', async () => {
@@ -84,14 +84,12 @@ describe('Route totem', () => {
   describe('GET /totem/:id/trancas', () => {
     it('should return 404 NOT FOUND', async () => {
       const response = await request(app).get('/totem/-1/trancas')
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Totem não encontrado' })
+      expectError(response, 404, 'Totem não encontrado')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).get('/totem/AbCd/trancas')
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'ID inválido' })
+      expectError(response, 422, 'ID inválido')
     })
 
     it('should return 200 and an array of trancas', async () => {
@@ -104,14 +102,12 @@ describe('Route totem', () => {
   describe('GET /totem/:id/bicicletas', () => {
     it('should return 404 NOT FOUND', async () => {
       const response = await request(app).get('/totem/-1/bicicletas')
-      expect(response.status).toBe(404)
-      expect(response.body).toEqual({ code: 404, message: 'Totem não encontrado' })
+      expectError(response, 404, 'Totem não encontrado')
     })
 
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).get('/totem/AbCd/bicicletas')
-      expect(response.status).toBe(422)
-      expect(response.body).toEqual({ code: 422, message: 'ID inválido' })
+      expectError(response, 422, 'ID inválido')
     })
 
     it('should return 200 and an array of bicicletas', async () => {
@@ -120,24 +116,22 @@ describe('Route totem', () => {
       expect(response.body).toBeInstanceOf(Array)
     })
   })
-})
 
-describe('DELETE /totem/:id', () => {
-  it('should return 404 NOT FOUND', async () => {
-    const response = await request(app).delete('/totem/-1')
-    expect(response.status).toBe(404)
-    expect(response.body).toEqual({ code: 404, message: 'Totem não encontrado' })
-  })
+  describe('DELETE /totem/:id', () => {
+    it('should return 404 NOT FOUND', async () => {
+      const response = await request(app).delete('/totem/-1')
+      expectError(response, 404, 'Totem não encontrado')
+    })
 
-  it('should return 422 UNPROCESSABLE ENTITY', async () => {
-    const response = await request(app).delete('/totem/AbCd')
-    expect(response.status).toBe(422)
-    expect(response.body).toEqual({ code: 422, message: 'ID inválido' })
-  })
+    it('should return 422 UNPROCESSABLE ENTITY', async () => {
+      const response = await request(app).delete('/totem/AbCd')
+      expectError(response, 422, 'ID inválido')
+    })
 
-  it('should return 200 OK', async () => {
-    const response = await request(app).delete(`/totem/${generatedTotemId}`)
-    expect(response.status).toBe(200)
-    expect(response.body).toEqual('')
+    it('should return 200 OK', async () => {
+      const response = await request(app).delete(`/totem/${generatedTotemId}`)
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual('')
+    })
   })
 })
