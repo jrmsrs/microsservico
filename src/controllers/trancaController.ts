@@ -6,7 +6,7 @@ import { ApiError } from '../error/ApiError'
 import { status } from '../enums/statusTrancaEnum'
 import { status as statusBicicleta } from '../enums/statusBicicletaEnum'
 import { Tranca } from '../models/trancaModel'
-import { Aluguel, Externo } from '../http'
+import { /* Aluguel, */ Externo } from '../http'
 
 interface TrancaResponse extends Tranca {
   localizacao?: string
@@ -15,16 +15,16 @@ interface TrancaResponse extends Tranca {
 export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
   return {
     email: dadosFuncionario.email,
-    assunto: `Tranca ${assunto} na rede`,
+    assunto: `Tranca ID-${dadosTranca.id as string} ${assunto} na rede`,
     mensagem: `\
-<p>Olá, ${dadosFuncionario.nome as string}!</p>
-<p>A tranca ${dadosTranca.modelo as string} de número ${dadosTranca.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!</p>
-<p>Foi utilizado o Totem ID-${dadosTranca.totemId as string}, localizado em ${dadosTranca.localizacao as string} para realizar a operação.</p>
-<br />
-<p>Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
-<br />
-<p>Atenciosamente,</p>
-<p>Equipe ---</p>`
+Olá, ${dadosFuncionario.nome as string}!
+A tranca ${dadosTranca.modelo as string} de número ${dadosTranca.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!
+Foi utilizado o Totem ID-${dadosTranca.totemId as string}, localizado em ${dadosTranca.localizacao as string} para realizar a operação.
+
+Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+
+Atenciosamente,
+Sistema do Bicicletário`
   }
 }
 
@@ -146,7 +146,13 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
       next(ApiError.badRequest('Tranca já integrada na rede ou aposentada'))
       return
     }
-    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
+    // const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
+    const funcionario = {
+      data: {
+        nome: 'Junior M. Soares',
+        email: 'arlsjunior@edu.unirio.br'
+      }
+    }
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: status.DISPONIVEL, totemId }) as TrancaResponse
     tranca.localizacao = await TotemService.getTotemById(totemId).then((totem) => totem.localizacao).catch(() => 'Não instalada')
     const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, tranca)
@@ -155,9 +161,13 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
         res.status(200).json({ tranca, emailGerado })
       })
       .catch(() => {
-        next(ApiError.internal(`\
-A tranca foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
-        ))
+        res.status(200).json({
+          aviso: 'Cheque se recebeu o e-mail',
+          tranca,
+          emailGerado
+        })
+        // next(ApiError.internal('A tranca foi integrada, mas ocorreu algum erro interno no envio do e-mail, cheque se recebeu:' +
+        // String(emailGerado.mensagem)))
       })
   } catch (error) {
     if (error instanceof Error) {
@@ -193,18 +203,39 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
       next(ApiError.badRequest('Tranca não está instalada no totem informado'))
       return
     }
-    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
+    // const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
+    const funcionario = {
+      data: {
+        nome: 'Junior M. Soares',
+        email: 'arlsjunior@edu.unirio.br'
+      }
+    }
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: statusAcaoReparador, totemId: undefined }) as TrancaResponse
     tranca.localizacao = 'Não instalada'
     const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, tranca)
+    // await fetch('http://localhost:8080/enviarEmail', {
+    //   method: 'POST',
+    //   body: {
+    //     email: 'arlsjunior@edu.unirio.br',
+    //     mensagem: 'teste',
+    //     assunto: 'teste'
+    //   },
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
     await Externo.post('/enviarEmail', emailGerado)
       .then(() => {
         res.status(200).json({ tranca, emailGerado })
       })
       .catch(() => {
-        next(ApiError.internal(`\
-A tranca foi retirada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
-        ))
+        res.status(200).json({
+          aviso: 'Cheque se recebeu o e-mail',
+          tranca,
+          emailGerado
+        })
+        // next(ApiError.internal('A tranca foi retirada, mas ocorreu algum erro interno no envio do e-mail, cheque se recebeu:' +
+        // String(emailGerado.mensagem)))
       })
     res.status(200).json({ tranca, emailGerado })
   } catch (error) {

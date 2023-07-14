@@ -323,9 +323,12 @@ describe('trancaController', () => {
       expectResCalledWith(res, next, ApiError.notFound('Totem não encontrado'))
     })
 
-    it('should return ApiError with status 500 if email service fails', async () => {
+    it('should return 200 OK with a warning message when email service fails', async () => {
       const req = { body: integrarNaRedeBody } as any as Request
-      const res = {} as unknown as Response
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
       const next = jest.fn() as any as NextFunction
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.NOVA })
@@ -333,7 +336,7 @@ describe('trancaController', () => {
       jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
       jest.spyOn(Externo, 'post').mockRejectedValue(new Error('Email service failed'))
       await (TrancaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, ApiError.internal(expect.stringContaining('A tranca foi integrada, mas')))
+      expectResCalledWith(res, next, expect.objectContaining({ aviso: 'Cheque se recebeu o e-mail' }), 200)
     })
   })
 
@@ -421,9 +424,12 @@ describe('trancaController', () => {
       expectResCalledWith(res, next, ApiError.notFound('Totem não encontrado'))
     })
 
-    it('should return ApiError with status 500 if email service fails', async () => {
+    it('should return 200 OK with a warning message when email service fails', async () => {
       const req = { body: retirarDaRedeBody } as any as Request
-      const res = {} as unknown as Response
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
       const next = jest.fn() as any as NextFunction
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
       jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
@@ -431,7 +437,7 @@ describe('trancaController', () => {
       jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
       jest.spyOn(Externo, 'post').mockRejectedValue(new Error('Email service failed'))
       await (TrancaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, ApiError.internal(expect.stringContaining('A tranca foi retirada, mas')))
+      expectResCalledWith(res, next, expect.objectContaining({ aviso: 'Cheque se recebeu o e-mail' }), 200)
     })
   })
 
