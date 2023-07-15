@@ -9,10 +9,10 @@ import { Aluguel, Externo } from '../http'
 export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosBicicleta: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
   return {
     email: dadosFuncionario.email,
-    assunto: `Bicicleta ID-${dadosBicicleta.id as string} ${assunto} na rede`,
+    assunto: `Bicicleta ID-${dadosBicicleta.id as string} ${assunto}`,
     mensagem: `\
 Olá, ${dadosFuncionario.nome as string}!
-A bicicleta ${dadosBicicleta.marca as string} - ${dadosBicicleta.modelo as string} de número ${dadosBicicleta.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!
+A bicicleta ${dadosBicicleta.marca as string} - ${dadosBicicleta.modelo as string} de número ${dadosBicicleta.numero as number} foi ${assunto}, como "${status}", com sucesso!
 Foi utilizada a tranca de modelo ${dadosTranca.modelo as string} e número ${dadosTranca.numero as number}, localizada no Totem ID-${dadosTranca.totemId as string} para realizar a operação.
 
 Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}

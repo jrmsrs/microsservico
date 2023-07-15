@@ -15,11 +15,12 @@ interface TrancaResponse extends Tranca {
 export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
   return {
     email: dadosFuncionario.email,
-    assunto: `Tranca ID-${dadosTranca.id as string} ${assunto} na rede`,
+    assunto: `Tranca ID-${dadosTranca.id as string} ${assunto}`,
     mensagem: `\
 Olá, ${dadosFuncionario.nome as string}!
-A tranca ${dadosTranca.modelo as string} de número ${dadosTranca.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!
-Foi utilizado o Totem ID-${dadosTranca.totemId as string}, localizado em ${dadosTranca.localizacao as string} para realizar a operação.
+A tranca ${dadosTranca.modelo as string} de número ${dadosTranca.numero as number} foi ${assunto}, como "${status}", com sucesso!
+Foi utilizado o Totem ID-${dadosTranca.totemId as string} para realizar a operação.
+Localização: ${dadosTranca.localizacao as string}
 
 Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
 
@@ -198,7 +199,7 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
     const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
     const tranca = await TrancaService.updateTranca(trancaId, { ...oldTranca, status: statusAcaoReparador, totemId: undefined }) as TrancaResponse
     tranca.localizacao = 'Não instalada'
-    const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, tranca)
+    const emailGerado = criaEmail('retirada', statusAcaoReparador, funcionario.data, tranca)
     await Externo.post('/enviarEmail', emailGerado)
       .then(() => {
         res.status(200).json({ tranca, emailGerado })
