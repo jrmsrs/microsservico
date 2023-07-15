@@ -98,6 +98,24 @@ describe('Route bicicleta', () => {
       const response = await request(app).post('/bicicleta/integrarNaRede').send({})
       expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
+
+    it('should return 200 OK', async () => {
+      // funcionario pré-cadastrado com meu email
+      funcionarioId = '8cd10c7c-20b3-44fc-9d47-5578726ab506'
+      const response = await request(app).post('/bicicleta/integrarNaRede').send({
+        funcionarioId,
+        trancaId: 8,
+        bicicletaId: generatedBicicletaId
+      })
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject({
+        emailGerado: {
+          email: 'arlsjunior@edu.unirio.br',
+          assunto: expect.any(String),
+          mensagem: expect.any(String)
+        }
+      })
+    })
   })
 
   describe('POST /bicicleta/retirarDaRede', () => {
@@ -114,6 +132,23 @@ describe('Route bicicleta', () => {
     it('should return 422 UNPROCESSABLE ENTITY', async () => {
       const response = await request(app).post('/bicicleta/retirarDaRede').send({})
       expectError(response, 422, 'Campos obrigatórios não preenchidos')
+    })
+
+    it('should return 200 OK', async () => {
+      const response = await request(app).post('/bicicleta/retirarDaRede').send({
+        funcionarioId,
+        trancaId: 8,
+        bicicletaId: generatedBicicletaId,
+        statusAcaoReparador: 'em reparo'
+      })
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject({
+        emailGerado: {
+          email: 'arlsjunior@edu.unirio.br',
+          assunto: expect.any(String),
+          mensagem: expect.any(String)
+        }
+      })
     })
   })
 

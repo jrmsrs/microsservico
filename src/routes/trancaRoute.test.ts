@@ -103,7 +103,24 @@ describe('Route tranca', () => {
       expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
 
-    it('should return 200 OK', async () => { }) // depende de um funcionario existente
+    it('should return 200 OK', async () => {
+      // funcionario pré-cadastrado com meu email
+      const funcionarioId = '8cd10c7c-20b3-44fc-9d47-5578726ab506'
+      const response = await request(app).post('/tranca/integrarNaRede').send({
+        funcionarioId,
+        totemId: 21,
+        trancaId: generatedTrancaId
+      })
+      console.log(response)
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject({
+        emailGerado: {
+          email: 'arlsjunior@edu.unirio.br',
+          assunto: expect.any(String),
+          mensagem: expect.any(String)
+        }
+      })
+    })
   })
 
   describe('POST /tranca/:id/trancar', () => {
@@ -170,7 +187,24 @@ describe('Route tranca', () => {
       expectError(response, 422, 'Campos obrigatórios não preenchidos')
     })
 
-    it('should return 200 OK', async () => { }) // depende de um funcionario existente
+    it('should return 200 OK', async () => {
+      // funcionario pré-cadastrado com meu email
+      const funcionarioId = '8cd10c7c-20b3-44fc-9d47-5578726ab506'
+      const response = await request(app).post('/tranca/retirarDaRede').send({
+        funcionarioId,
+        totemId: 21,
+        trancaId: generatedTrancaId,
+        statusAcaoReparador: 'em reparo'
+      })
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject({
+        emailGerado: {
+          email: 'arlsjunior@edu.unirio.br',
+          assunto: expect.any(String),
+          mensagem: expect.any(String)
+        }
+      })
+    })
   })
 
   describe('DELETE /tranca/:id', () => {
