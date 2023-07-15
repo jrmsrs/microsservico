@@ -15,16 +15,16 @@ interface TrancaResponse extends Tranca {
 export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
   return {
     email: dadosFuncionario.email,
-    assunto: `Tranca ${assunto} na rede`,
+    assunto: `Tranca ID-${dadosTranca.id as string} ${assunto} na rede`,
     mensagem: `\
-<p>Olá, ${dadosFuncionario.nome as string}!</p>
-<p>A tranca ${dadosTranca.modelo as string} de número ${dadosTranca.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!</p>
-<p>Foi utilizado o Totem ID-${dadosTranca.totemId as string}, localizado em ${dadosTranca.localizacao as string} para realizar a operação.</p>
-<br />
-<p>Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
-<br />
-<p>Atenciosamente,</p>
-<p>Equipe ---</p>`
+Olá, ${dadosFuncionario.nome as string}!
+A tranca ${dadosTranca.modelo as string} de número ${dadosTranca.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!
+Foi utilizado o Totem ID-${dadosTranca.totemId as string}, localizado em ${dadosTranca.localizacao as string} para realizar a operação.
+
+Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+
+Atenciosamente,
+Sistema do Bicicletário`
   }
 }
 
@@ -155,9 +155,11 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
         res.status(200).json({ tranca, emailGerado })
       })
       .catch(() => {
-        next(ApiError.internal(`\
-A tranca foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
-        ))
+        res.status(200).json({
+          aviso: 'Cheque se recebeu o e-mail',
+          tranca,
+          emailGerado
+        })
       })
   } catch (error) {
     if (error instanceof Error) {
@@ -202,9 +204,11 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
         res.status(200).json({ tranca, emailGerado })
       })
       .catch(() => {
-        next(ApiError.internal(`\
-A tranca foi retirada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
-        ))
+        res.status(200).json({
+          aviso: 'Cheque se recebeu o e-mail',
+          tranca,
+          emailGerado
+        })
       })
     res.status(200).json({ tranca, emailGerado })
   } catch (error) {

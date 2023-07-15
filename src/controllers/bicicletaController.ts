@@ -9,16 +9,16 @@ import { Aluguel, Externo } from '../http'
 export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosBicicleta: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
   return {
     email: dadosFuncionario.email,
-    assunto: `Bicicleta ${assunto} na rede`,
+    assunto: `Bicicleta ID-${dadosBicicleta.id as string} ${assunto} na rede`,
     mensagem: `\
-<p>Olá, ${dadosFuncionario.nome as string}!</p>
-<p>A bicicleta ${dadosBicicleta.marca as string} - ${dadosBicicleta.modelo as string} de número ${dadosBicicleta.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!</p>
-<p>Foi utilizada a tranca de modelo ${dadosTranca.modelo as string} e número ${dadosTranca.numero as number}, localizada no Totem ID-${dadosTranca.totemId as string} para realizar a operação.</p>
-<br />
-<p>Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</p>
-<br />
-<p>Atenciosamente,</p>
-<p>Equipe ---</p>`
+Olá, ${dadosFuncionario.nome as string}!
+A bicicleta ${dadosBicicleta.marca as string} - ${dadosBicicleta.modelo as string} de número ${dadosBicicleta.numero as number} foi ${assunto} na rede, como "${status}", com sucesso!
+Foi utilizada a tranca de modelo ${dadosTranca.modelo as string} e número ${dadosTranca.numero as number}, localizada no Totem ID-${dadosTranca.totemId as string} para realizar a operação.
+
+Data e hora da operação: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+
+Atenciosamente,
+Sistema do Bicicletário`
   }
 }
 
@@ -140,7 +140,11 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
         res.status(200).json({ tranca, emailGerado })
       })
       .catch(() => {
-        next(ApiError.internal('A bicicleta foi integrada, mas ocorreu um erro interno ao enviar o e-mail: ' + String(emailGerado.mensagem)))
+        res.status(200).json({
+          aviso: 'Cheque se recebeu o e-mail',
+          tranca,
+          emailGerado
+        })
       })
     res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
@@ -182,9 +186,11 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
         res.status(200).json({ tranca, emailGerado })
       })
       .catch(() => {
-        next(ApiError.internal(`\
-A bicicleta foi retirada, mas ocorreu um erro interno ao enviar o e-mail: ${String(emailGerado.mensagem)}`
-        ))
+        res.status(200).json({
+          aviso: 'Cheque se recebeu o e-mail',
+          tranca,
+          emailGerado
+        })
       })
     res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
