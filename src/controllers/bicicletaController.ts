@@ -4,7 +4,7 @@ import * as TrancaService from '../services/trancaService'
 import { ApiError } from '../error/ApiError'
 import { status } from '../enums/statusBicicletaEnum'
 import { status as statusTranca } from '../enums/statusTrancaEnum'
-import { /* Aluguel, */ Externo } from '../http'
+import { Aluguel, Externo } from '../http'
 
 export const criaEmail = (assunto: string, status: string, dadosFuncionario: any, dadosBicicleta: any, dadosTranca: any): { email: string, assunto: string, mensagem: string } => {
   return {
@@ -131,13 +131,7 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
       next(ApiError.badRequest('Bicicleta já integrada na rede ou aposentada'))
       return
     }
-    // const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
-    const funcionario = {
-      data: {
-        nome: 'Junior M. Soares',
-        email: 'arlsjunior@edu.unirio.br'
-      }
-    }
+    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: status.DISPONIVEL })
     await TrancaService.insertBicicleta(Number(trancaId), Number(bicicletaId))
     const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, bicicleta, tranca)
@@ -151,8 +145,6 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
           tranca,
           emailGerado
         })
-        // next(ApiError.internal('A bicicleta foi integrada, mas ocorreu um algum erro interno no envio do e-mail, cheque se recebeu:\n' +
-        // String(emailGerado.mensagem)))
       })
     res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
@@ -185,13 +177,7 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
       next(ApiError.badRequest('Bicicleta não está conectada a tranca informada'))
       return
     }
-    // const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
-    const funcionario = {
-      data: {
-        nome: 'Junior M. Soares',
-        email: 'arlsjunior@edu.unirio.br'
-      }
-    }
+    const funcionario = await Aluguel.get(`/funcionario/${String(funcionarioId)}`)
     const bicicleta = await BicicletaService.updateBicicleta(Number(bicicletaId), { ...oldBicicleta, status: statusAcaoReparador })
     await TrancaService.removeBicicleta(Number(trancaId))
     const emailGerado = criaEmail('retirada', statusAcaoReparador, funcionario.data, bicicleta, tranca)
@@ -205,8 +191,6 @@ export const retirarDaRede = async (req: Request, res: Response, next: NextFunct
           tranca,
           emailGerado
         })
-        // next(ApiError.internal('A bicicleta foi retirada, mas ocorreu algum erro interno no envio do e-mail, cheque se recebeu:\n' +
-        // String(emailGerado.mensagem)))
       })
     res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
