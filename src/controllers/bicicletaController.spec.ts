@@ -338,14 +338,22 @@ describe('bicicletaController', () => {
         json: jest.fn()
       } as unknown as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, bicicletaId: validId, status: status.EM_USO })
-      jest.spyOn(BicicletaService, 'getBicicletaById').mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
-      jest.spyOn(BicicletaService, 'updateBicicleta').mockResolvedValue({ ...bicicleta, status: status.EM_REPARO })
-      jest.spyOn(TrancaService, 'removeBicicleta').mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
-      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
-      jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
+      jest.spyOn(TrancaService, 'getTrancaById')
+        .mockResolvedValue({ ...tranca, bicicletaId: validId, status: status.EM_USO })
+      jest.spyOn(BicicletaService, 'getBicicletaById')
+        .mockResolvedValue({ ...bicicleta, status: status.DISPONIVEL })
+      jest.spyOn(BicicletaService, 'updateBicicleta')
+        .mockResolvedValue({ ...bicicleta, status: status.EM_REPARO })
+      jest.spyOn(TrancaService, 'removeBicicleta')
+        .mockResolvedValue({ ...tranca, status: statusTranca.DISPONIVEL })
+      jest.spyOn(Aluguel, 'get')
+        .mockResolvedValueOnce({ data: funcionario })
+      jest.spyOn(Externo, 'post')
+        .mockResolvedValue({ status: 200 })
       await (BicicletaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
-      expectResCalledWith(res, next, expect.objectContaining({ bicicleta: { ...bicicleta, status: status.EM_REPARO } }), 200)
+      expectResCalledWith(res, next, expect.objectContaining({
+        bicicleta: { ...bicicleta, status: status.EM_REPARO }
+      }), 200)
     })
 
     it('should return ApiError with status 422 when body is missing a field', async () => {

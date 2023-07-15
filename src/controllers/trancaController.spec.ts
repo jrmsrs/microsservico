@@ -331,10 +331,20 @@ describe('trancaController', () => {
       } as unknown as Response
       const next = jest.fn() as any as NextFunction
       jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
-      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.NOVA })
-      jest.spyOn(TrancaService, 'updateTranca').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
-      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
-      jest.spyOn(Externo, 'post').mockRejectedValue(new Error('Email service failed'))
+      jest.spyOn(TrancaService, 'getTrancaById')
+        .mockResolvedValue({
+          ...tranca, status: status.NOVA
+        })
+      jest.spyOn(TrancaService, 'updateTranca')
+        .mockResolvedValue({
+          ...tranca, status: status.DISPONIVEL
+        })
+      jest.spyOn(Aluguel, 'get')
+        .mockResolvedValueOnce({
+          data: funcionario
+        })
+      jest.spyOn(Externo, 'post')
+        .mockRejectedValue(new Error('Email service failed'))
       await (TrancaController.integrarNaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, expect.objectContaining({ aviso: 'Cheque se recebeu o e-mail' }), 200)
     })
@@ -355,11 +365,16 @@ describe('trancaController', () => {
         json: jest.fn()
       } as unknown as Response
       const next = jest.fn() as any as NextFunction
-      jest.spyOn(TotemService, 'getTotemById').mockResolvedValue(totem)
-      jest.spyOn(TrancaService, 'getTrancaById').mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
-      jest.spyOn(TrancaService, 'updateTranca').mockResolvedValue({ ...tranca, status: status.EM_REPARO })
-      jest.spyOn(Aluguel, 'get').mockResolvedValueOnce({ data: funcionario })
-      jest.spyOn(Externo, 'post').mockResolvedValue({ status: 200 })
+      jest.spyOn(TotemService, 'getTotemById')
+        .mockResolvedValue(totem)
+      jest.spyOn(TrancaService, 'getTrancaById')
+        .mockResolvedValue({ ...tranca, status: status.DISPONIVEL })
+      jest.spyOn(TrancaService, 'updateTranca')
+        .mockResolvedValue({ ...tranca, status: status.EM_REPARO })
+      jest.spyOn(Aluguel, 'get')
+        .mockResolvedValueOnce({ data: funcionario })
+      jest.spyOn(Externo, 'post')
+        .mockResolvedValue({ status: 200 })
       await (TrancaController.retirarDaRede(req, res, next) as unknown as Promise<void>)
       expectResCalledWith(res, next, expect.objectContaining({ tranca: { ...tranca, status: status.EM_REPARO, localizacao: 'Não instalada' } }), 200)
     })

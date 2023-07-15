@@ -136,16 +136,8 @@ export const integrarNaRede = async (req: Request, res: Response, next: NextFunc
     await TrancaService.insertBicicleta(Number(trancaId), Number(bicicletaId))
     const emailGerado = criaEmail('integrada', status.DISPONIVEL, funcionario.data, bicicleta, tranca)
     await Externo.post('/enviarEmail', emailGerado)
-      .then(() => {
-        res.status(200).json({ tranca, emailGerado })
-      })
-      .catch(() => {
-        res.status(200).json({
-          aviso: 'Cheque se recebeu o e-mail',
-          tranca,
-          emailGerado
-        })
-      })
+      .then(() => { res.status(200).json({ tranca, emailGerado }) })
+      .catch(() => { res.status(200).json({ aviso: 'Cheque se recebeu o e-mail', tranca, emailGerado }) })
     res.status(200).json({ bicicleta, emailGerado })
   } catch (error) {
     if (error instanceof Error) {
