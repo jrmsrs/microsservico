@@ -8,11 +8,11 @@ microsserviço para gerenciamento de equipamentos de um sistema de controle de b
 
 esse sistema de controle de bicicletário é um backend composto por 3 microsserviços que se comunicam entre si e com sistemas externos onde alguns endpoints são acessados internamente e outros pelo frontend
 
-## [descrição dos endpoints 📡](/src/routes/README.md#descrição-dos-endpoints-📡)
+## [descrição dos endpoints 📡](/src/routes#descrição-dos-endpoints-)
 
-- [/bicicleta/*](/src/routes/README.md#bicicleta-🚲): bicicletas
-- [/tranca/*](/src/routes/README.md#tranca-🔒): trancas
-- [/totem/*](/src/routes/README.md#totem-🏬): estações
+- [/bicicleta/*](/src/routes#bicicleta-): bicicletas
+- [/tranca/*](/src/routes#tranca-): trancas
+- [/totem/*](/src/routes#totem-): estações
 
 ## integrações (grupo) 🌐
 
@@ -26,11 +26,11 @@ esse sistema de controle de bicicletário é um backend composto por 3 microsser
 - node.js + express
 - typescript
 
-### [padrão de projeto 🏗](/src/README.md)
-- [estrutura de pastas](/src/README.md#estrutura-de-pastas-🗄️)
-- [fluxo de dados](/src/README.md#fluxo-de-dados-📊)
-- [descrição das pastas](/src/README.md#descrição-das-pastas-📁)
-- [testes](/src/README.md#testes-🧪)
+### [padrão de projeto 🏗](/src)
+- [estrutura de pastas](/src#estrutura-de-pastas-🗄️)
+- [fluxo de dados](/src#fluxo-de-dados-📊)
+- [descrição das pastas](/src#descrição-das-pastas-📁)
+- [testes](/src#testes-🧪)
 
 ### banco de dados 💾
 
