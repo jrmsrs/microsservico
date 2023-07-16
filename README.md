@@ -1,17 +1,23 @@
-# microserviço equipamento 📦
+# microsserviço equipamento 📦
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jrmsrs_microsservico&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jrmsrs_microsservico)
+[![quality gate status](https://sonarcloud.io/api/project_badges/measure?project=jrmsrs_microsservico&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jrmsrs_microsservico)
 
 ## sobre 📖
 
-microsserviço para gerenciamento de equipamentos de um sistema de controle de bicicletário
+microsserviço para gerenciamento de equipamentos de um sistema de controle de bicicletário - gerencia o sistema de bicicletas, trancas e estações de um bicicletário
 
-gerencia bicicletas, cadeados e totens
+esse sistema de controle de bicicletário é um backend composto por 3 microsserviços que se comunicam entre si e com sistemas externos onde alguns endpoints são acessados internamente e outros pelo frontend
+
+## [descrição dos endpoints 📡](/src/routes/README.md#descrição-dos-endpoints-📡)
+
+- [/bicicleta/*](/src/routes/README.md#bicicleta-🚲): bicicletas
+- [/tranca/*](/src/routes/README.md#tranca-🔒): trancas
+- [/totem/*](/src/routes/README.md#totem-🏬): estações
 
 ## integrações (grupo) 🌐
 
-- [microserviço aluguel (kevincrys/microsservicoAluguel)](https://github.com/kevincrys/microsservicoAluguel): gerenciamento de funcionários, cliclistas e aluguéis
-- [microserviço externo (Mad-Clap/Externo_PM)](https://github.com/Mad-Clap/Externo_PM): gerenciamento de cobranças, comunicação com sistemas externos de envio de e-mail e cartao de credito
+- [microsserviço aluguel (kevincrys/microsservicoAluguel)](https://github.com/kevincrys/microsservicoAluguel): gerenciamento de funcionários, ciclistas e aluguéis
+- [microsserviço externo (Mad-Clap/Externo_PM)](https://github.com/Mad-Clap/Externo_PM): gerenciamento de cobranças, comunicação com sistemas externos de envio de e-mail e cartão de credito
 
 ## setup do ambiente 🛠
 
@@ -20,9 +26,15 @@ gerencia bicicletas, cadeados e totens
 - node.js + express
 - typescript
 
+### [padrão de projeto 🏗](/src/README.md)
+- [estrutura de pastas](/src/README.md#estrutura-de-pastas-🗄️)
+- [fluxo de dados](/src/README.md#fluxo-de-dados-📊)
+- [descrição das pastas](/src/README.md#descrição-das-pastas-📁)
+- [testes](/src/README.md#testes-🧪)
+
 ### banco de dados 💾
 
-- [supabase](https://supabase.io/) ([postgresql](https://www.postgresql.org/)) - banco de dados relacional com api restful
+- [supabase](https://supabase.io/) ([postgresql](https://www.postgresql.org/)) - banco de dados relacional com api restful compatível com typescript
 
 ### repositório remoto 📡
 
@@ -31,9 +43,9 @@ gerencia bicicletas, cadeados e totens
 ### testes 🧪
 
 - [jest](https://jestjs.io/) - testes de unidade, mocks e cobertura
-- [supertest](https://github.com/ladjs/supertest) - testes de integração
+- [supertest](https://github.com/ladjs/supertest) - [testes de integração](/src/routes/)
 
-### CI/CD 🚧
+### ci/cd 🚧
 
 - [sonarcloud](https://sonarcloud.io/) - inspeção contínua de código e análise de qualidade com cobertura de testes, duplicação de código, vulnerabilidades, bugs e code smells
   
