@@ -24,7 +24,7 @@ export default {
   setup: swaggerUi.setup(
     swaggerJSDoc(options),
     {
-      customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.min.css'
+      customCssUrl: 'https://jrmsrs.github.io/supersecrepcto/DarkReader-localhost-----.css'
     }
   )
 }
